@@ -1,8 +1,17 @@
-import './App.css';
+// * : libraries
+import React, {useContext} from 'react';
+// * : helpers
+import {contexts} from "./helpers/contexts"
+// * : components
+import {GlobalStyles} from "./components/GlobalStyles.styles"
+// * : pages
+import MapHome from "./pages/MapHome";
+
 function App() {
   return (
     <div className="App">
-     gg
+     <GlobalStyles/>
+     <MapHome/>
     </div>
   );
 }
