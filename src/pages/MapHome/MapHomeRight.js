@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 // * : helpers
-import { contexts } from "../helpers/contexts";
+import { contexts } from "../../helpers/contexts";
 // * : components
 import {
   MapHomeRightTop,
@@ -9,8 +9,9 @@ import {
   SearchPlace,
   RecommendedPlace,
   PlaceCard,
+  IconDiv,
   MapHomeRightTopBtn,
-} from "../components/MapHomeRightContainer.styles";
+} from "../../components/MapHomeStyles/MapHomeRight.styles";
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 
 // 임시 데이터 배열들
@@ -313,15 +314,6 @@ function MapHomeRight({ placesAll, setPlacesAll }) {
   );
 }
 
-const IconDiv = styled.div`
-  & svg {
-    cursor: pointer;
-    position: absolute;
-    right: 3px;
-    bottom: 3px;
-  }
-  & svg:hover {
-  }
-`;
+
 
 export default MapHomeRight;

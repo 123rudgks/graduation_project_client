@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
 // * : helpers
-import { contexts } from "../helpers/contexts";
+import { contexts } from "../../helpers/contexts";
 
 const mapOptions = {
   center: new window.naver.maps.LatLng(33.38544662494779, 126.5550319629174), //지도의 중심좌표.
@@ -12,17 +12,25 @@ const mapOptions = {
 const infoWindows = [];
 
 function NaverMap({ __placesAll, __clickedDay, __setSchedule, __schedule }) {
-  const { markers } = useContext(contexts);
+  const { markers, clickedDay, setClickedDay } = useContext(contexts);
   //const [infoWindows, setInfoWindows] = useState([]);
   let map;
 
   // 마커 클릭 이벤트 함수
   const getClickHandler = (marker, infoWindow) => {
-    // 마커위 정보 on , off
-    if (infoWindow.getMap()) {
-      infoWindow.close();
+    // 왼쪽 사이드바 day가 클릭이 안되어 있을 경우 정보 표시
+    if (clickedDay.day) {
+      setClickedDay({
+        ...clickedDay,
+        places: clickedDay.places.concat(marker.title),
+      });
     } else {
-      infoWindow.open(map, marker);
+      // 마커위 정보 on , off
+      if (infoWindow.getMap()) {
+        infoWindow.close();
+      } else {
+        infoWindow.open(map, marker);
+      }
     }
 
     // schedule 배열에서 clicked day와 일치하는 객체의 place에 클릭된 마커 넣어주기

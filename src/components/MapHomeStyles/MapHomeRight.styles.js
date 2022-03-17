@@ -46,3 +46,14 @@ export const PlaceCard = styled.div`
     padding: 3px;
   }
 `;
+
+export const IconDiv = styled.div`
+  & svg {
+    cursor: pointer;
+    position: absolute;
+    right: 3px;
+    bottom: 3px;
+  }
+  & svg:hover {
+  }
+`;

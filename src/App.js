@@ -5,7 +5,7 @@ import {contexts} from "./helpers/contexts"
 // * : components
 import {GlobalStyles} from "./components/GlobalStyles.styles"
 // * : pages
-import MapHome from "./pages/MapHome";
+import MapHome from "./pages/MapHome/MapHome";
 
 function App() {
   return (
