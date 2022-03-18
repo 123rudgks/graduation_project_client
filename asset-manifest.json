@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/graduation_project_client/static/css/main.eef340fd.css",
+    "main.js": "/graduation_project_client/static/js/main.793484b9.js",
+    "static/media/IM_Hyemin-Regular.otf": "/graduation_project_client/static/media/IM_Hyemin-Regular.c3e5a3273dad40325e12.otf",
+    "index.html": "/graduation_project_client/index.html",
+    "main.eef340fd.css.map": "/graduation_project_client/static/css/main.eef340fd.css.map",
+    "main.793484b9.js.map": "/graduation_project_client/static/js/main.793484b9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.eef340fd.css",
+    "static/js/main.793484b9.js"
+  ]
+}
