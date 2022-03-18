@@ -6,8 +6,9 @@ export const NavbarContainer = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  height: 50px;
-  background-color: #263343;
+  height: 60px;
+  box-shadow: 0px -3px 3px 0px #f0f0f0 inset;
+  font-family: ${(props)=>props.theme.IM_Hyemin};
 `;
 export const NavbarLogo = styled.div`
   font-size: 24px;
@@ -22,7 +23,7 @@ export const NavbarMenu = styled.ul`
     padding: 10px 20px;
   }
   & li:hover {
-    background-color: rgb(87, 170, 166);
+    background-color: #D0D3D4;
     border-radius: 5px;
     cursor: pointer;
   }

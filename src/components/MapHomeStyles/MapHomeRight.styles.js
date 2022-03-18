@@ -9,8 +9,12 @@ export const MapHomeRightTop = styled.div`
 `;
 export const MapHomeRightTopBtn = styled.button`
   height: 30px;
+  border: none;
   border-radius: 10px;
   background-color: ${(props) => (props.clicked ? "#DCFCFC" : "#FFFFFF")};
+  box-shadow: 0px 0px 5px 2px #f0f0f0;
+  font-family: ${(props) => props.theme.defaultFont};
+  font-weight: ${(props) => (props.clicked ? "bold" : "")};
 `;
 export const MapHomeRightBottom = styled.div`
   height: calc(100% - 110px);
@@ -36,8 +40,9 @@ export const PlaceCard = styled.div`
   width: 100%;
   height: 50px;
   margin: 10px 0;
-  border: 1px solid;
-
+  border: none;
+  background-color: white;
+  box-shadow: 0px 0px 5px 2px #f0f0f0;
   & img {
     width: 50px;
   }
@@ -51,8 +56,8 @@ export const IconDiv = styled.div`
   & svg {
     cursor: pointer;
     position: absolute;
-    right: 3px;
-    bottom: 3px;
+    right: 8px;
+    bottom: 5px;
   }
   & svg:hover {
   }

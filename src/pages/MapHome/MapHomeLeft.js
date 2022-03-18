@@ -28,34 +28,38 @@ function MapHomeLeft() {
   }.${endDate.getDay()}`;
 
   // * : states
-  const tempDays = [];
-  for (let i = 1; i <= totalPeriod; i++) {
-    tempDays.push({ day: i, clicked: false, places: [] });
-  }
-  const [days, setDays] = useState(tempDays);
+  // 각 날짜별 정보 (날짜, 클릭여부, 선택된 장소들)
+  const [days, setDays] = useState(() => {
+    const initDays = [];
+    for (let i = 1; i <= totalPeriod; i++) {
+      initDays.push({ day: i, clicked: false, places: [] });
+    }
+    return initDays;
+  });
+  // 클릭한 날짜 정보 (날짜, 선택된 장소들)
   const { clickedDay, setClickedDay } = useContext(contexts);
 
   // * : functions
-
   // 각 day title 클릭 시 clicked 변경 함수
   const onDayTitle = (index) => {
-    const tempDays = days.map((_item, _index) => {
+    const newDays = days.map((_item, _index) => {
       if (index === _index) {
         setClickedDay({ day: _item.day, places: _item.places });
         return { ..._item, clicked: true };
       }
       return { ..._item, clicked: false };
     });
-    setDays(tempDays);
+    setDays(newDays);
   };
+  // day외의 창 클릭 시 day clear
   const onClearDay = () => {
     const tempDays = days.map((_item, _index) => {
       return { ..._item, clicked: false };
     });
-    setDays(tempDays);
     setClickedDay({ day: 0, places: [] });
+    setDays(tempDays);
   };
-  // 카드의 - 버튼 클릭 시 day에서 제거
+  // 카드의 - 버튼 클릭 시 해당 장소를 days에서 제거
   const removeFromDay = (day, place) => {
     const newPlaces = day.places.filter((_place) => {
       if (place === _place) {
@@ -70,6 +74,10 @@ function MapHomeLeft() {
       return _item;
     });
     setDays(newDays);
+    // clickedDay의 places와 days의 places와 동기화 해주기 위함
+    if (day.day === clickedDay.day) {
+      setClickedDay({ ...clickedDay, places: newPlaces });
+    }
   };
 
   useEffect(() => {
@@ -101,6 +109,7 @@ function MapHomeLeft() {
       >
         {days.map((item, index) => (
           <DayBox
+            key={index}
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -113,8 +122,8 @@ function MapHomeLeft() {
             >
               Day {item.day}
             </DayTitle>
-            {item.places.map((place) => (
-              <PlaceCard>
+            {item.places.map((place,index) => (
+              <PlaceCard key={index}>
                 <img
                   src={
                     "https://media-cdn.tripadvisor.com/media/photo-s/19/86/41/82/thessaloniki-greece-s.jpg"
@@ -143,6 +152,7 @@ function MapHomeLeft() {
 }
 
 const CreateBtn = styled.button`
+border: none;
   display: block;
   height: 50px;
   min-height: 50px;

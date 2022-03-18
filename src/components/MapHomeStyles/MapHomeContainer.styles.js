@@ -3,9 +3,10 @@ import styled from "styled-components";
 export const MapHomeDiv = styled.div`
   display: flex;
   flex-direction: column;
+  font-family: ${(props) => props.theme.defaultFont};
 `;
 export const MapHomeContainer = styled.div`
-  height: calc(100vh - 40px);
+  height: calc(100vh - 60px);
   display: flex;
   flex-direction: row;
 `;
@@ -16,7 +17,7 @@ export const MapHomeLeftContainer = styled.div`
   width: 260px;
   height: 100%;
   padding: 10px;
-  background-color: #f7f9f9;
+  background-color: ${(props) => props.theme.grayBGColor};
 `;
 export const MapHomeCenterContainer = styled.div`
   flex: auto;
@@ -26,8 +27,5 @@ export const MapHomeRightContainer = styled.div`
   width: 240px;
   height: 100%;
   padding: 10px;
-  background-color: #f7f9f9;
+  background-color: ${(props) => props.theme.grayBGColor};
 `;
-
-
-

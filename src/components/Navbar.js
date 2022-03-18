@@ -8,8 +8,8 @@ function Navbar({ menus }) {
     <NavbarContainer>
       <NavbarLogo>[LOGO IMG]</NavbarLogo>
       <NavbarMenu>
-        {menus.map((menu) => (
-          <li>{menu}</li>
+        {menus.map((menu,index) => (
+          <li key={index}>{menu}</li>
         ))}
       </NavbarMenu>
     </NavbarContainer>

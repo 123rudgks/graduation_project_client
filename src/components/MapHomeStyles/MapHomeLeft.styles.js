@@ -4,6 +4,7 @@ export const Header = styled.div`
   text-align: center;
   height: 110px;
   & div {
+    font-size: 20px;
     height: 55px;
   }
 `;
@@ -13,6 +14,7 @@ export const Contents = styled.div`
 `;
 export const DayBox = styled.div``;
 export const DayTitle = styled.div`
+font-weight: bold;
   font-size: ${(props) => (props.clicked ? "25px" : "20px")};
   color: ${(props) => (props.clicked ? "#FF8282" : "#000")};
   &:hover {

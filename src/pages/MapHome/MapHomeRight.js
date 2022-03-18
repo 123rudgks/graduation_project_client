@@ -13,6 +13,7 @@ import {
   MapHomeRightTopBtn,
 } from "../../components/MapHomeStyles/MapHomeRight.styles";
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
+import { IconContext } from "react-icons";
 
 // 임시 데이터 배열들
 let hotels = [
@@ -247,73 +248,72 @@ function MapHomeRight({ placesAll, setPlacesAll }) {
 
   return (
     <>
-      <MapHomeRightTop>
-        <SearchPlace />
-        <RecommendedPlace>
+        <MapHomeRightTop>
+          <SearchPlace />
+          <RecommendedPlace>
+            <MapHomeRightTopBtn
+              clicked={clickedBtn === "추천 호텔"}
+              onClick={() => {
+                setClickedBtn("추천 호텔");
+              }}
+            >
+              추천 호텔
+            </MapHomeRightTopBtn>
+            <MapHomeRightTopBtn
+              clicked={clickedBtn === "추천 장소"}
+              onClick={() => {
+                setClickedBtn("추천 장소");
+              }}
+            >
+              추천 장소
+            </MapHomeRightTopBtn>
+          </RecommendedPlace>
           <MapHomeRightTopBtn
-            clicked={clickedBtn === "추천 호텔"}
+            clicked={clickedBtn === "선택한 장소"}
             onClick={() => {
-              setClickedBtn("추천 호텔");
+              setClickedBtn("선택한 장소");
             }}
           >
-            추천 호텔
+            선택한 장소
           </MapHomeRightTopBtn>
-          <MapHomeRightTopBtn
-            clicked={clickedBtn === "추천 장소"}
-            onClick={() => {
-              setClickedBtn("추천 장소");
-            }}
-          >
-            추천 장소
-          </MapHomeRightTopBtn>
-        </RecommendedPlace>
-        <MapHomeRightTopBtn
-          clicked={clickedBtn === "선택한 장소"}
-          onClick={() => {
-            setClickedBtn("선택한 장소");
-          }}
-        >
-          선택한 장소
-        </MapHomeRightTopBtn>
-      </MapHomeRightTop>
-      <MapHomeRightBottom>
-        {currentContents.map((item, index) => {
-          return (
-            <PlaceCard>
-              <img
-                src={
-                  "https://media-cdn.tripadvisor.com/media/photo-s/19/86/41/82/thessaloniki-greece-s.jpg"
-                }
-                alt="이미지 안뜸"
-              />
-              <div>
-                <div>{currentContents[index].name}</div>
-                <IconDiv>
-                  {item.onMap ? (
-                    <BiMinusCircle
-                      size={20}
-                      onClick={() => {
-                        removeMarkerFromMap(item, index);
-                      }}
-                    />
-                  ) : (
-                    <BiPlusCircle
-                      size={20}
-                      onClick={() => {
-                        addMarkerOnMap(item);
-                      }}
-                    />
-                  )}
-                </IconDiv>
-              </div>
-            </PlaceCard>
-          );
-        })}
-      </MapHomeRightBottom>
+        </MapHomeRightTop>
+        <MapHomeRightBottom>
+          {currentContents.map((item, index) => {
+            return (
+              <PlaceCard key={index}>
+                <img
+                  src={
+                    "https://media-cdn.tripadvisor.com/media/photo-s/19/86/41/82/thessaloniki-greece-s.jpg"
+                  }
+                  alt="이미지 안뜸"
+                />
+                <div>
+                  <div>{currentContents[index].name}</div>
+                  <IconDiv>
+                    {item.onMap ? (
+                      <BiMinusCircle
+                      color="red"
+                        size={18}
+                        onClick={() => {
+                          removeMarkerFromMap(item, index);
+                        }}
+                      />
+                    ) : (
+                      <BiPlusCircle
+                        size={18}
+                        onClick={() => {
+                          addMarkerOnMap(item);
+                        }}
+                      />
+                    )}
+                  </IconDiv>
+                </div>
+              </PlaceCard>
+            );
+          })}
+        </MapHomeRightBottom>
     </>
   );
 }
-
-
 
 export default MapHomeRight;
