@@ -122,7 +122,7 @@ function MapHomeLeft() {
             >
               Day {item.day}
             </DayTitle>
-            {item.places.map((place,index) => (
+            {item.places.map((place, index) => (
               <PlaceCard key={index}>
                 <img
                   src={
@@ -152,12 +152,20 @@ function MapHomeLeft() {
 }
 
 const CreateBtn = styled.button`
-border: none;
+  font-family: ${(props) => props.theme.defaultFont};
+  border: none;
   display: block;
   height: 50px;
   min-height: 50px;
   background-color: #dcfcfc;
   border-radius: 10px;
+  box-shadow: 0px 0px 5px 2px #f0f0f0;
+  &:hover{
+    font-weight: bold;
+  }
+  &:active{
+    box-shadow: none;
+  }
 `;
 
 export default MapHomeLeft;

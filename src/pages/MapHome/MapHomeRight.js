@@ -14,6 +14,7 @@ import {
 } from "../../components/MapHomeStyles/MapHomeRight.styles";
 import { BiPlusCircle, BiMinusCircle } from "react-icons/bi";
 import { IconContext } from "react-icons";
+import axios from "axios";
 
 // 임시 데이터 배열들
 let hotels = [
@@ -173,7 +174,8 @@ function MapHomeRight({ placesAll, setPlacesAll }) {
   const [placeContents, setPlaceContents] = useState(places);
   // 클릭한 버튼
   const [clickedBtn, setClickedBtn] = useState("추천 호텔");
-
+  // input 값
+  const [searchValue, setSearchValue] = useState("");
   // * : functions
   // 지도위에 마커 추가 함수
   const addMarkerOnMap = (item) => {
@@ -231,6 +233,24 @@ function MapHomeRight({ placesAll, setPlacesAll }) {
     });
     setMarkers(newMarkers);
   };
+  // input창 submit
+  const onSubmit = async (value) => {
+    console.log(value);
+    await axios
+      .post("http://localhost:3001/search/search", { search: searchValue })
+      .then((res) => {
+        setCurrentContents([
+          {
+            tag: "place",
+            name: res.data.title,
+            img: res.data.item_img,
+            lng: res.data.lng,
+            lat: res.data.lat,
+            onMap: false,
+          },
+        ]);
+      });
+  };
 
   useEffect(() => {
     // 클릭한 버튼에 따라 표시되는 장소 카드들의 상태(+,-)를 최신값으로 유지
@@ -248,70 +268,75 @@ function MapHomeRight({ placesAll, setPlacesAll }) {
 
   return (
     <>
-        <MapHomeRightTop>
-          <SearchPlace />
-          <RecommendedPlace>
-            <MapHomeRightTopBtn
-              clicked={clickedBtn === "추천 호텔"}
-              onClick={() => {
-                setClickedBtn("추천 호텔");
-              }}
-            >
-              추천 호텔
-            </MapHomeRightTopBtn>
-            <MapHomeRightTopBtn
-              clicked={clickedBtn === "추천 장소"}
-              onClick={() => {
-                setClickedBtn("추천 장소");
-              }}
-            >
-              추천 장소
-            </MapHomeRightTopBtn>
-          </RecommendedPlace>
+      <MapHomeRightTop>
+        <SearchPlace
+          value={searchValue}
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              onSubmit(searchValue);
+            }
+          }}
+        />
+        <RecommendedPlace>
           <MapHomeRightTopBtn
-            clicked={clickedBtn === "선택한 장소"}
+            clicked={clickedBtn === "추천 호텔"}
             onClick={() => {
-              setClickedBtn("선택한 장소");
+              setClickedBtn("추천 호텔");
             }}
           >
-            선택한 장소
+            추천 호텔
           </MapHomeRightTopBtn>
-        </MapHomeRightTop>
-        <MapHomeRightBottom>
-          {currentContents.map((item, index) => {
-            return (
-              <PlaceCard key={index}>
-                <img
-                  src={
-                    "https://media-cdn.tripadvisor.com/media/photo-s/19/86/41/82/thessaloniki-greece-s.jpg"
-                  }
-                  alt="이미지 안뜸"
-                />
-                <div>
-                  <div>{currentContents[index].name}</div>
-                  <IconDiv>
-                    {item.onMap ? (
-                      <BiMinusCircle
+          <MapHomeRightTopBtn
+            clicked={clickedBtn === "추천 장소"}
+            onClick={() => {
+              setClickedBtn("추천 장소");
+            }}
+          >
+            추천 장소
+          </MapHomeRightTopBtn>
+        </RecommendedPlace>
+        <MapHomeRightTopBtn
+          clicked={clickedBtn === "선택한 장소"}
+          onClick={() => {
+            setClickedBtn("선택한 장소");
+          }}
+        >
+          선택한 장소
+        </MapHomeRightTopBtn>
+      </MapHomeRightTop>
+      <MapHomeRightBottom>
+        {currentContents.map((item, index) => {
+          return (
+            <PlaceCard key={index}>
+              <img src={item.img} alt="이미지 안뜸" />
+              <div>
+                <div>{currentContents[index].name}</div>
+                <IconDiv>
+                  {item.onMap ? (
+                    <BiMinusCircle
                       color="red"
-                        size={18}
-                        onClick={() => {
-                          removeMarkerFromMap(item, index);
-                        }}
-                      />
-                    ) : (
-                      <BiPlusCircle
-                        size={18}
-                        onClick={() => {
-                          addMarkerOnMap(item);
-                        }}
-                      />
-                    )}
-                  </IconDiv>
-                </div>
-              </PlaceCard>
-            );
-          })}
-        </MapHomeRightBottom>
+                      size={18}
+                      onClick={() => {
+                        removeMarkerFromMap(item, index);
+                      }}
+                    />
+                  ) : (
+                    <BiPlusCircle
+                      size={18}
+                      onClick={() => {
+                        addMarkerOnMap(item);
+                      }}
+                    />
+                  )}
+                </IconDiv>
+              </div>
+            </PlaceCard>
+          );
+        })}
+      </MapHomeRightBottom>
     </>
   );
 }

@@ -15,6 +15,9 @@ export const MapHomeRightTopBtn = styled.button`
   box-shadow: 0px 0px 5px 2px #f0f0f0;
   font-family: ${(props) => props.theme.defaultFont};
   font-weight: ${(props) => (props.clicked ? "bold" : "")};
+  &:active{
+    box-shadow: 0px 0px 5px 2px #f0f0f0 inset;
+  }
 `;
 export const MapHomeRightBottom = styled.div`
   height: calc(100% - 110px);
@@ -48,7 +51,7 @@ export const PlaceCard = styled.div`
   }
   & div {
     flex: auto;
-    padding: 3px;
+    padding: 4px;
   }
 `;
 
