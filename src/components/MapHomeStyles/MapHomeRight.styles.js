@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const MapHomeRightTop = styled.div`
   display: flex;
@@ -11,11 +11,11 @@ export const MapHomeRightTopBtn = styled.button`
   height: 30px;
   border: none;
   border-radius: 10px;
-  background-color: ${(props) => (props.clicked ? "#DCFCFC" : "#FFFFFF")};
+  background-color: ${(props) => (props.clicked ? '#DCFCFC' : '#FFFFFF')};
   box-shadow: 0px 0px 5px 2px #f0f0f0;
   font-family: ${(props) => props.theme.defaultFont};
-  font-weight: ${(props) => (props.clicked ? "bold" : "")};
-  &:active{
+  font-weight: ${(props) => (props.clicked ? 'bold' : '')};
+  &:active {
     box-shadow: 0px 0px 5px 2px #f0f0f0 inset;
   }
 `;

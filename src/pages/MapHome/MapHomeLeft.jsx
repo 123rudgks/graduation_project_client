@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useContext } from "react";
-import styled from "styled-components";
-// * : helpers
-import { contexts } from "../../helpers/contexts";
+import React, { useEffect, useState, useContext } from 'react';
+import styled from 'styled-components';
 // * : components
+import { BiMinusCircle } from 'react-icons/bi';
 import {
   Header,
   Contents,
   DayBox,
   DayTitle,
-} from "../../components/MapHomeStyles/MapHomeLeft.styles";
+} from '../../components/MapHomeStyles/MapHomeLeft.styles';
 import {
   PlaceCard,
   IconDiv,
-} from "../../components/MapHomeStyles/MapHomeRight.styles";
-import { BiMinusCircle } from "react-icons/bi";
+} from '../../components/MapHomeStyles/MapHomeRight.styles';
+// * : helpers
+import { contexts } from '../../helpers/contexts';
 
 function MapHomeLeft() {
   // * : 임시로 만든 변수들. 차후 수정 요함
-  const startDate = new Date("2022-02-01");
-  const endDate = new Date("2022-02-05");
+  const startDate = new Date('2022-02-01');
+  const endDate = new Date('2022-02-05');
   const totalPeriod = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   const startDateStr = `${startDate.getFullYear()}.${
     startDate.getMonth() + 1
@@ -31,7 +31,7 @@ function MapHomeLeft() {
   // 각 날짜별 정보 (날짜, 클릭여부, 선택된 장소들)
   const [days, setDays] = useState(() => {
     const initDays = [];
-    for (let i = 1; i <= totalPeriod; i++) {
+    for (let i = 1; i <= totalPeriod; i += 1) {
       initDays.push({ day: i, clicked: false, places: [] });
     }
     return initDays;
@@ -53,9 +53,10 @@ function MapHomeLeft() {
   };
   // day외의 창 클릭 시 day clear
   const onClearDay = () => {
-    const tempDays = days.map((_item, _index) => {
-      return { ..._item, clicked: false };
-    });
+    const tempDays = days.map((_item, _index) => ({
+      ..._item,
+      clicked: false,
+    }));
     setClickedDay({ day: 0, places: [] });
     setDays(tempDays);
   };
@@ -98,9 +99,7 @@ function MapHomeLeft() {
         }}
       >
         <div>제주도</div>
-        <div>
-          {startDateStr} ~ {endDateStr}
-        </div>
+        <div>{`${startDate} ~ ${endDateStr}`}</div>
       </Header>
       <Contents
         onClick={() => {
@@ -109,7 +108,7 @@ function MapHomeLeft() {
       >
         {days.map((item, index) => (
           <DayBox
-            key={index}
+            key={item.day}
             onClick={(e) => {
               e.stopPropagation();
             }}
@@ -120,18 +119,13 @@ function MapHomeLeft() {
                 onDayTitle(index);
               }}
             >
-              Day {item.day}
+              {`Day ${item.day}`}
             </DayTitle>
-            {item.places.map((place, index) => (
-              <PlaceCard key={index}>
-                <img
-                  src={
-                    "https://media-cdn.tripadvisor.com/media/photo-s/19/86/41/82/thessaloniki-greece-s.jpg"
-                  }
-                  alt="이미지 안뜸"
-                />
+            {item.places.map((place) => (
+              <PlaceCard key={place.name}>
+                <img src={place.img} alt="이미지 안뜸" />
                 <div>
-                  <div>{place}</div>
+                  <div>{place.name}</div>
                   <IconDiv>
                     <BiMinusCircle
                       size={20}
@@ -160,10 +154,10 @@ const CreateBtn = styled.button`
   background-color: #dcfcfc;
   border-radius: 10px;
   box-shadow: 0px 0px 5px 2px #f0f0f0;
-  &:hover{
+  &:hover {
     font-weight: bold;
   }
-  &:active{
+  &:active {
     box-shadow: none;
   }
 `;

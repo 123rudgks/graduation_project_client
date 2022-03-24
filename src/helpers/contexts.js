@@ -1,5 +1,5 @@
-import React, { createContext } from "react";
+import React, { createContext } from 'react';
 
-export const contexts = createContext("");
+export const contexts = createContext('');
 
-export const clickedDayContext = createContext("");
+export const clickedDayContext = createContext('');

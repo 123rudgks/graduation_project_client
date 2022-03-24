@@ -1,7 +1,7 @@
 // * : libraries
-import React, { createContext, useState } from "react";
+import React, { useState } from 'react';
 // * : helpers
-import { contexts } from "../../helpers/contexts";
+import { contexts } from '../../helpers/contexts';
 // * : components
 import {
   MapHomeDiv,
@@ -9,11 +9,11 @@ import {
   MapHomeRightContainer,
   MapHomeCenterContainer,
   MapHomeLeftContainer,
-} from "../../components/MapHomeStyles/MapHomeContainer.styles";
-import Navbar from "../../components/Navbar";
-import NaverMap from "./NaverMap";
-import MapHomeRight from "./MapHomeRight";
-import MapHomeLeft from "./MapHomeLeft";
+} from '../../components/MapHomeStyles/MapHomeContainer.styles';
+import Navbar from '../../components/Navbar';
+import NaverMap from './NaverMap';
+import MapHomeRight from './MapHomeRight';
+import MapHomeLeft from './MapHomeLeft';
 
 function MapHome() {
   const [markers, setMarkers] = useState([]);
@@ -23,7 +23,7 @@ function MapHome() {
       <contexts.Provider
         value={{ markers, setMarkers, clickedDay, setClickedDay }}
       >
-        <Navbar menus={["Menu1", "Menu2", "Menu3"]} />
+        <Navbar menus={['Menu1', 'Menu2', 'Menu3']} />
         <MapHomeContainer>
           <MapHomeLeftContainer>
             <MapHomeLeft />

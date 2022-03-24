@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const NavbarContainer = styled.nav`
   box-sizing: border-box;
@@ -8,7 +8,7 @@ export const NavbarContainer = styled.nav`
   padding: 8px 12px;
   height: 60px;
   box-shadow: 0px -3px 3px 0px #f0f0f0 inset;
-  font-family: ${(props)=>props.theme.IM_Hyemin};
+  font-family: ${(props) => props.theme.IM_Hyemin};
 `;
 export const NavbarLogo = styled.div`
   font-size: 24px;
@@ -23,7 +23,7 @@ export const NavbarMenu = styled.ul`
     padding: 10px 20px;
   }
   & li:hover {
-    background-color: #D0D3D4;
+    background-color: #d0d3d4;
     border-radius: 5px;
     cursor: pointer;
   }
