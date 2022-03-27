@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 // * : helpers
-import * as contexts from '../../helpers/contexts';
+import { contexts } from '../../helpers/contexts';
 
 const mapOptions = {
   center: new window.naver.maps.LatLng(33.38544662494779, 126.5550319629174), // 지도의 중심좌표.
@@ -12,7 +12,7 @@ const mapOptions = {
 const infoWindows = [];
 
 function NaverMap() {
-  const { markers, clickedDay, setClickedDay } = useContext(contexts.contexts);
+  const { markers, clickedDay, setClickedDay } = useContext(contexts);
   // const [infoWindows, setInfoWindows] = useState([]);
   let map;
 
@@ -27,11 +27,9 @@ function NaverMap() {
           img: marker.img,
         }),
       });
+    } else if (infoWindow.getMap()) {
+      infoWindow.close();
     } else {
-      // 마커위 정보 on , off
-      if (infoWindow.getMap()) {
-        infoWindow.close();
-      }
       infoWindow.open(map, marker);
     }
 
@@ -63,8 +61,11 @@ function NaverMap() {
       });
       // 마커에 달릴 정보
       const infoWindow = new window.naver.maps.InfoWindow({
-        content: `<div style="width:200px;text-align:center;padding:10px;"><b>
-          ${markers[i].name} 
+        content: `<div style="width:300px;text-align:center;padding:10px;"><b>
+          ${markers[i].name}<br>
+          사이트 : ${markers[i].site}<br>
+          주소 : ${markers[i].address}<br>
+          도로명 주소 : ${markers[i].address_road}<br>
           </b><br>-네이버 지도 -</div>`,
       });
       // 마커에 이벤트 부착
@@ -72,7 +73,7 @@ function NaverMap() {
         getClickHandler(marker, infoWindow);
       });
     }
-  }, [markers]);
+  }, [markers, clickedDay]);
   return <div id="map" style={{ width: '100%', height: '100%' }} />;
 }
 

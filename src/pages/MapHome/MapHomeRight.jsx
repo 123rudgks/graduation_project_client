@@ -278,22 +278,19 @@ function MapHomeRight() {
       .then((res) => {
         // eslint-disable-next-line no-console
         console.log(res.data);
-        const newCurrentContents = res.data.map((place) => {
-          // let lng = parseInt(place.mapx, 10) ;
-          // let lat = parseInt(place.mapy, 10);
 
-          // let xy = [lng, lat];
-          // let resLocation = proj4("TM128", "WGS84", xy);
-          const resLocation = lngLatConverter(place.mapx, place.mapy);
-          return {
+        const newCurrentContents = res.data.map((place) => (
+          {
             tag: 'search',
             name: place.title,
-            img: place.item_img,
-            lng: resLocation[0],
-            lat: resLocation[1],
+            address: place.address,
+            address_road: place.roadAddress,
+            site: place.link,
+            img: place.imgUrl,
+            lng: place.lng,
+            lat: place.lat,
             onMap: false,
-          };
-        });
+          }));
         setCurrentContents(newCurrentContents);
       });
     setSearchValue('');

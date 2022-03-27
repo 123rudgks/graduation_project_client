@@ -1,5 +1,5 @@
 // * : libraries
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 // * : helpers
 import { contexts } from '../../helpers/contexts';
 // * : components
@@ -21,7 +21,13 @@ function MapHome() {
   return (
     <MapHomeDiv>
       <contexts.Provider
-        value={{ markers, setMarkers, clickedDay, setClickedDay }}
+        // eslint-disable-next-line react/jsx-no-constructed-context-values
+        value={{
+          markers,
+          setMarkers,
+          clickedDay,
+          setClickedDay,
+        }}
       >
         <Navbar menus={['Menu1', 'Menu2', 'Menu3']} />
         <MapHomeContainer>
