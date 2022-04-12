@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import styled from 'styled-components';
 // * : components
 import { BiMinusCircle } from 'react-icons/bi';
@@ -52,34 +57,37 @@ function MapHomeLeft() {
     setDays(newDays);
   };
   // day외의 창 클릭 시 day clear
-  const onClearDay = () => {
-    const tempDays = days.map((_item, _index) => ({
+  const onClearDay = useCallback(() => {
+    setClickedDay({ day: 0, places: [] });
+    setDays((prevDays) => prevDays.map((_item, _index) => ({
       ..._item,
       clicked: false,
-    }));
-    setClickedDay({ day: 0, places: [] });
-    setDays(tempDays);
-  };
+    })));
+  }, []);
   // 카드의 - 버튼 클릭 시 해당 장소를 days에서 제거
-  const removeFromDay = (day, place) => {
+  const removeFromDay = useCallback((day, place) => {
     const newPlaces = day.places.filter((_place) => {
       if (place === _place) {
         return false;
       }
       return true;
     });
-    const newDays = days.map((_item) => {
-      if (_item.day === day.day) {
-        return { ..._item, places: newPlaces };
-      }
-      return _item;
-    });
-    setDays(newDays);
+    setDays((prevDays) => (
+      prevDays.map((_item) => {
+        if (_item.day === day.day) {
+          return { ..._item, places: newPlaces };
+        }
+        return _item;
+      })
+    ));
     // clickedDay의 places와 days의 places와 동기화 해주기 위함
-    if (day.day === clickedDay.day) {
-      setClickedDay({ ...clickedDay, places: newPlaces });
-    }
-  };
+    setClickedDay((prevClickedDay) => {
+      if (day.day === prevClickedDay.day) {
+        return { ...prevClickedDay, places: newPlaces };
+      }
+      return prevClickedDay;
+    });
+  }, []);
 
   useEffect(() => {
     // NaverMap에서 클릭한 marker 정보 day에 저장

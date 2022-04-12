@@ -1,5 +1,6 @@
 // * : libraries
 import React, { useContext } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // * : componentsß
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from './components/GlobalStyles.styles';
@@ -18,12 +19,12 @@ const theme = {
 
 function App() {
   return (
-    <div className="App">
+    <BrowserRouter>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
         <MapHome />
       </ThemeProvider>
-    </div>
+    </BrowserRouter>
   );
 }
 

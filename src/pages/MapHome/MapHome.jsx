@@ -16,8 +16,11 @@ import MapHomeRight from './MapHomeRight';
 import MapHomeLeft from './MapHomeLeft';
 
 function MapHome() {
+  // 지도위에 찍혀 있는 마커들 배열
   const [markers, setMarkers] = useState([]);
-  const [clickedDay, setClickedDay] = useState({ day: 0, places: [] });
+  // 날짜 클릭시 해당하는 날짜 정보
+  const [clickedDay, setClickedDay] = useState({ day: 0, places: [], img: '' });
+
   return (
     <MapHomeDiv>
       <contexts.Provider
@@ -30,6 +33,7 @@ function MapHome() {
         }}
       >
         <Navbar menus={['Menu1', 'Menu2', 'Menu3']} />
+
         <MapHomeContainer>
           <MapHomeLeftContainer>
             <MapHomeLeft />

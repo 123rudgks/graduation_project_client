@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import axios from 'axios';
 import proj4 from 'proj4';
 // * : components
@@ -188,7 +193,7 @@ function MapHomeRight() {
 
   // * : functions
   // 지도위에 마커 추가 함수
-  const addMarkerOnMap = (item) => {
+  const addMarkerOnMap = useCallback((item) => {
     switch (item.tag) {
       case 'hotel': {
         const newHotels = hotelContents.map((_item) => {
@@ -224,10 +229,11 @@ function MapHomeRight() {
         console.log('addMarkerOnMap에서 tag가 검출이 안됨');
     }
     // 지도위에 현재 클릭한 마커 추가
-    setMarkers(markers.concat({ ...item, onMap: true }));
-  };
+    setMarkers((prevMarkers) => prevMarkers.concat({ ...item, onMap: true }));
+  }, []);
+
   // 지도위에 마커 제거 함수
-  const removeMarkerFromMap = (item) => {
+  const removeMarkerFromMap = useCallback((item) => {
     switch (item.tag) {
       case 'hotel': {
         const newHotels = hotelContents.map((_item) => {
@@ -255,42 +261,28 @@ function MapHomeRight() {
       }
     }
     // 마커 배열에서 onMap이 false된 아이템 제거
-    const newMarkers = markers.filter((_item) => {
-      if (item.name === _item.name) {
-        return false;
-      }
+    setMarkers((prevMarkers) => prevMarkers.filter((_item) => {
+      if (item.name === _item.name) { return false; }
       return true;
-    });
-    setMarkers(newMarkers);
-  };
-  // 위도 경도 변환 함수
-  const lngLatConverter = (_lng, _lat) => {
-    const lng = parseInt(_lng, 10);
-    const lat = parseInt(_lat, 10);
-    const xy = [lng, lat];
-    const resLocation = proj4('TM128', 'WGS84', xy);
-    return resLocation;
-  };
+    }));
+  }, []);
+
   // input창 submit
   const onSubmit = async () => {
     await axios
       .post('http://localhost:3001/search/search', { search: searchValue })
       .then((res) => {
-        // eslint-disable-next-line no-console
-        console.log(res.data);
-
-        const newCurrentContents = res.data.map((place) => (
-          {
-            tag: 'search',
-            name: place.title,
-            address: place.address,
-            address_road: place.roadAddress,
-            site: place.link,
-            img: place.imgUrl,
-            lng: place.lng,
-            lat: place.lat,
-            onMap: false,
-          }));
+        const newCurrentContents = res.data.map((place) => ({
+          tag: 'search',
+          name: place.title,
+          address: place.address,
+          address_road: place.roadAddress,
+          site: place.link,
+          img: place.imgUrl,
+          lng: place.lng,
+          lat: place.lat,
+          onMap: false,
+        }));
         setCurrentContents(newCurrentContents);
       });
     setSearchValue('');
