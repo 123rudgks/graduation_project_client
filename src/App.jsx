@@ -1,13 +1,16 @@
 // * : libraries
 import React, { useContext } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-// * : componentsß
+// * : components
 import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from './components/GlobalStyles.styles';
 // * : helpers
 import { contexts } from './helpers/contexts';
 // * : pages
 import MapHome from './pages/MapHome/MapHome';
+import Login from './pages/User/Login';
+import Signin from './pages/User/Signin';
+
 // * : css
 import './font/font.css';
 
@@ -22,7 +25,11 @@ function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <MapHome />
+        <Routes>
+          <Route path="login" element={<Login />} />
+          <Route path="signin" element={<Signin />} />
+          <Route path="mapHome" element={<MapHome />} />
+        </Routes>
       </ThemeProvider>
     </BrowserRouter>
   );

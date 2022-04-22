@@ -22,8 +22,8 @@ import { contexts } from '../../helpers/contexts';
 
 function MapHomeLeft() {
   // * : 임시로 만든 변수들. 차후 수정 요함
-  const startDate = new Date('2022-02-01');
-  const endDate = new Date('2022-02-05');
+  const startDate = new Date('2022-04-22');
+  const endDate = new Date('2022-04-25');
   const totalPeriod = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   const startDateStr = `${startDate.getFullYear()}.${
     startDate.getMonth() + 1

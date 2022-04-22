@@ -1,14 +1,9 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-} from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import axios from 'axios';
 import proj4 from 'proj4';
 // * : components
+import RecommendModal from '../../components/RecommendModal';
 import { BiPlusCircle, BiMinusCircle } from 'react-icons/bi';
-
 import {
   MapHomeRightTop,
   MapHomeRightBottom,
@@ -188,6 +183,7 @@ function MapHomeRight() {
   // const [searchContents, setSearchContents] = useState([]);
   // 클릭한 버튼
   const [clickedBtn, setClickedBtn] = useState('추천 호텔');
+  const [openModal, setOpenModal] = useState(false);
   // input 값
   const [searchValue, setSearchValue] = useState('');
 
@@ -261,10 +257,14 @@ function MapHomeRight() {
       }
     }
     // 마커 배열에서 onMap이 false된 아이템 제거
-    setMarkers((prevMarkers) => prevMarkers.filter((_item) => {
-      if (item.name === _item.name) { return false; }
-      return true;
-    }));
+    setMarkers((prevMarkers) =>
+      prevMarkers.filter((_item) => {
+        if (item.name === _item.name) {
+          return false;
+        }
+        return true;
+      }),
+    );
   }, []);
 
   // input창 submit
@@ -304,6 +304,7 @@ function MapHomeRight() {
 
   return (
     <>
+      {openModal && <RecommendModal setOpenModal={setOpenModal} addMarkerOnMap={addMarkerOnMap}/>}
       <MapHomeRightTop>
         <SearchPlace
           value={searchValue}
@@ -321,6 +322,7 @@ function MapHomeRight() {
             clicked={clickedBtn === '추천 호텔'}
             onClick={() => {
               setClickedBtn('추천 호텔');
+              setOpenModal(true);
             }}
           >
             추천 호텔
@@ -329,6 +331,7 @@ function MapHomeRight() {
             clicked={clickedBtn === '추천 장소'}
             onClick={() => {
               setClickedBtn('추천 장소');
+              setOpenModal(true);
             }}
           >
             추천 장소
