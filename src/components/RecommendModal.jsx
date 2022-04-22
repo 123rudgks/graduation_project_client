@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import axios from 'axios';
+import { MdClose } from 'react-icons/md';
 
 const ModalContainer = styled.div`
   position: absolute;
@@ -8,71 +10,117 @@ const ModalContainer = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 12px;
+  padding: 10px;
   width: 60%;
   height: 70vh;
   background-color: white;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   overflow: auto;
-`;
-const PlaceCard = styled.div`
-padding: 10px;
-  display: flex;
-  img{
-    width: 200px;
+  button {
+    float: right;
   }
-  & .cardInfo {
-    padding:10px;
-    display: flex;
-    flex-direction: column;
-    button{
-      width: 50px;
+  & .modalTitle {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+  }
+  & .closeIcon {
+    margin: 10px;
+    float: right;
+  }
+  & .subContent {
+    padding: 10px;
+  }
+`;
+const ModalContent = styled.div`
+  display: flex;
+  div {
+    padding: 10px;
+  }
+  & .imgDiv {
+    flex: 1;
+    text-align: center;
+    & img {
+      width: 100%;
     }
   }
+  & .infoDiv {
+    flex: 1;
+  }
 `;
-/*
-addr1": "제주특별자치도 제주시 산록북로 819",
-                        "addr2": "(아라일동)",
-                        "areacode": 39,
-                        "cat1": "B02",
-                        "cat2": "B0201",
-                        "cat3": "B02010700",
-                        "contentid": 2486105,
-                        "contenttypeid": 32,
-                        "createdtime": 20170320165505,
-                        "firstimage": "http://tong.visitkorea.or.kr/cms/resource/96/2486096_image2_1.JPG",
-                        "firstimage2": "http://tong.visitkorea.or.kr/cms/resource/96/2486096_image2_1.JPG",
-                        "mapx": 126.5544690871,
-                        "mapy": 33.4375488373,
-                        "mlevel": 6,
-                        "modifiedtime": 20211231111726,
-                        "readcount": 1964,
-                        "sigungucode": 4,
-                        "tel": "064-724-9931",
-                        "title": "관음사가는길펜션"
-*/
-function RecommendModal({ setOpenModal, addMarkerOnMap }) {
-  const tempArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+function RecommendModal({
+  setOpenModal,
+  addMarkerOnMap,
+  modalTitle,
+  modalPlaces,
+  info,
+}) {
   return (
     <ModalContainer>
-      <button onClick={() => setOpenModal(false)}>cancel</button>
-      {tempArr.map((i) => (
-        <PlaceCard key={i}>
-          <img src="http://tong.visitkorea.or.kr/cms/resource/96/2486096_image2_1.JPG"></img>
-          <div className='cardInfo'>
-            <div>title: 관음사가는길펜션</div>
-            <div>addr1: 제주특별자치도 제주시 산록북로 819</div>
-            <div>tel: 064-724-9931</div>
-            <button onClick={()=>{addMarkerOnMap({
-              tag: 'search',
-              name: '관음사가는길펜션',
-              lat: 33.4375488373,
-              lng: 126.5544690871,
-              onMap: false,
-            })}}>add</button>
+      <MdClose
+        className="closeIcon"
+        size={18}
+        onClick={() => setOpenModal(false)}
+      />
+      <div className="modalTitle">{modalTitle}</div>
+      <ModalContent>
+        <div className="imgDiv">
+          <img src={info.img} alt="이미지 없음"></img>
+        </div>
+        <div className="infoDiv">
+          <div>{info.name}</div>
+          <div>주소 : {info.address}</div>
+          <div>전화 번호 : {info.tel}</div>
+          {info.link && <div dangerouslySetInnerHTML={{ __html: info.link }} />}
+          {info.checkintime && (
+            <div>
+              check in / check out : {info.checkintime} / {info.checkouttime}
+            </div>
+          )}
+          {info.eventstartdate && (
+            <div>
+              기간 : {info.eventstartdate} ~ {info.eventenddate}
+            </div>
+          )}
+          {info.parking && <div>{info.parking}</div>}
+          {info.playtime && <div>운영 시간 : {info.playtime}</div>}
+          {info.priceInfo && (
+            <>
+              <div>- 금액 - </div>
+              <div dangerouslySetInnerHTML={{ __html: info.priceInfo }} />
+            </>
+          )}
+        </div>
+      </ModalContent>
+      <div className="subContent">
+        <div>{info.foodplace && `식당 : ${info.foodplace}`}</div>
+        <div>{info.subfacility && `부가시설 : ${info.subfacility}`}</div>
+      </div>
+      {/* {modalPlaces.map((place) => (
+        <PlaceCard key={place.title}>
+          <img src={place.firstimage} alt="이미지 없음"></img>
+          <div className="cardInfo">
+            <div>{place.title}</div>
+            <div>{place.addr1}</div>
+            <div>{place.tel}</div>
+            <button
+              onClick={() => {
+                addMarkerOnMap({
+                  tag: 'search',
+                  name: place.title,
+                  lat: place.mapy,
+                  lng: place.mapx,
+                  onMap: false,
+                });
+              }}
+            >
+              add
+            </button>
           </div>
         </PlaceCard>
-        
-      ))}
+      ))} */}
     </ModalContainer>
   );
 }
@@ -80,6 +128,8 @@ function RecommendModal({ setOpenModal, addMarkerOnMap }) {
 RecommendModal.propTypes = {
   setOpenModal: PropTypes.func,
   addMarkerOnMap: PropTypes.func,
-  
+  modalTitle: PropTypes.string,
+  modalPlaces: PropTypes.array,
+  info: PropTypes.object,
 };
 export default RecommendModal;

@@ -22,15 +22,15 @@ import { contexts } from '../../helpers/contexts';
 
 function MapHomeLeft() {
   // * : 임시로 만든 변수들. 차후 수정 요함
-  const startDate = new Date('2022-04-22');
-  const endDate = new Date('2022-04-25');
+  const startDate = new Date(2022,3,22);
+  const endDate = new Date(2022,3,24);
   const totalPeriod = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   const startDateStr = `${startDate.getFullYear()}.${
-    startDate.getMonth() + 1
-  }.${startDate.getDay()}`;
+    startDate.getMonth()+1 
+  }.${startDate.getDate()}`;
   const endDateStr = `${endDate.getFullYear()}.${
-    endDate.getMonth() + 1
-  }.${endDate.getDay()}`;
+    endDate.getMonth()+1
+  }.${endDate.getDate()}`;
 
   // * : states
   // 각 날짜별 정보 (날짜, 클릭여부, 선택된 장소들)
@@ -107,7 +107,7 @@ function MapHomeLeft() {
         }}
       >
         <div>제주도</div>
-        <div>{`${startDate} ~ ${endDateStr}`}</div>
+        <div>{`${startDateStr} ~ ${endDateStr}`}</div>
       </Header>
       <Contents
         onClick={() => {

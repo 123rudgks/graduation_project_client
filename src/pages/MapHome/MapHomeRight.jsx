@@ -3,7 +3,7 @@ import axios from 'axios';
 import proj4 from 'proj4';
 // * : components
 import RecommendModal from '../../components/RecommendModal';
-import { BiPlusCircle, BiMinusCircle } from 'react-icons/bi';
+import { BiPlusCircle, BiMinusCircle, BiInfoCircle } from 'react-icons/bi';
 import {
   MapHomeRightTop,
   MapHomeRightBottom,
@@ -184,6 +184,9 @@ function MapHomeRight() {
   // 클릭한 버튼
   const [clickedBtn, setClickedBtn] = useState('추천 호텔');
   const [openModal, setOpenModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('추천 호텔');
+  const [modalPlaces, setModalPlaces] = useState([]);
+  const [recommendInfo, setRecommendInfo] = useState({});
   // input 값
   const [searchValue, setSearchValue] = useState('');
 
@@ -268,7 +271,7 @@ function MapHomeRight() {
   }, []);
 
   // input창 submit
-  const onSubmit = async () => {
+  const searchPlace = async () => {
     await axios
       .post('http://localhost:3001/search/search', { search: searchValue })
       .then((res) => {
@@ -288,14 +291,68 @@ function MapHomeRight() {
     setSearchValue('');
   };
 
+  const sendKeyword = async (keyword) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:3001/recommend-${keyword}/search-keyword`,
+        { keyword: '제주' },
+      );
+      //console.log(data.data.response.body.items.item);
+      const dataArr = res.data.response.body.items.item;
+      const newCurrentContents = dataArr.map((place) => ({
+        tag: keyword,
+        contentId: place.contentid,
+        name: place.title,
+        address: place.addr1,
+        img: place.firstimage,
+        lng: place.mapx,
+        lat: place.mapy,
+        onMap: false,
+      }));
+      // setModalPlaces(res.data.response.body.items.item);
+      setCurrentContents(newCurrentContents);
+    } catch {}
+  };
+
+  const showInfo = async (item) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:3001/recommend-${item.tag}/detailIntro`,
+        { contentId: item.contentId },
+      );
+      const information = {
+        name: item.name,
+        img: item.img,
+        address: res.data.eventplace || item.address,
+        tel: res.data.sponsor1tel || res.data.infocenterlodging,
+        detail: res.data,
+        link: res.data.reservationurl,
+        eventstartdate: res.data.eventstartdate,
+        eventenddate: res.data.eventenddate,
+        priceInfo: res.data.usetimefestival,
+        playtime: res.data.playtime,
+        checkintime: res.data.checkintime,
+        checkouttime: res.data.checkouttime,
+        parking: res.data.parkinglodging,
+        foodplace: res.data.foodplace,
+        subfacility: res.data.subfacility,
+      };
+      console.log('res', res.data);
+      setRecommendInfo(information);
+    } catch (e) {
+      console.log(e);
+    }
+  };
   useEffect(() => {
     // 클릭한 버튼에 따라 표시되는 장소 카드들의 상태(+,-)를 최신값으로 유지
     switch (clickedBtn) {
       case '추천 호텔':
-        setCurrentContents(hotelContents);
+        // setCurrentContents(hotelContents);
+        setCurrentContents(modalPlaces);
         break;
       case '추천 장소':
-        setCurrentContents(placeContents);
+        // setCurrentContents(placeContents);
+        setCurrentContents(modalPlaces);
         break;
       default:
         setCurrentContents(markers);
@@ -304,7 +361,15 @@ function MapHomeRight() {
 
   return (
     <>
-      {openModal && <RecommendModal setOpenModal={setOpenModal} addMarkerOnMap={addMarkerOnMap}/>}
+      {openModal && (
+        <RecommendModal
+          setOpenModal={setOpenModal}
+          addMarkerOnMap={addMarkerOnMap}
+          modalTitle={modalTitle}
+          modalPlaces={modalPlaces}
+          info={recommendInfo}
+        />
+      )}
       <MapHomeRightTop>
         <SearchPlace
           value={searchValue}
@@ -313,7 +378,7 @@ function MapHomeRight() {
           }}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
-              onSubmit(searchValue);
+              searchPlace(searchValue);
             }
           }}
         />
@@ -321,8 +386,10 @@ function MapHomeRight() {
           <MapHomeRightTopBtn
             clicked={clickedBtn === '추천 호텔'}
             onClick={() => {
+              sendKeyword('stay');
               setClickedBtn('추천 호텔');
-              setOpenModal(true);
+              setModalTitle('추천 호텔');
+              setOpenModal(false);
             }}
           >
             추천 호텔
@@ -330,8 +397,10 @@ function MapHomeRight() {
           <MapHomeRightTopBtn
             clicked={clickedBtn === '추천 장소'}
             onClick={() => {
+              sendKeyword('place');
               setClickedBtn('추천 장소');
-              setOpenModal(true);
+              setModalTitle('추천 장소');
+              setOpenModal(false);
             }}
           >
             추천 장소
@@ -353,6 +422,13 @@ function MapHomeRight() {
             <div>
               <div>{currentContents[index].name}</div>
               <IconDiv>
+                <BiInfoCircle
+                  onClick={() => {
+                    showInfo(item);
+                    setOpenModal(true);
+                  }}
+                  size={18}
+                />
                 {item.onMap ? (
                   <BiMinusCircle
                     color="red"

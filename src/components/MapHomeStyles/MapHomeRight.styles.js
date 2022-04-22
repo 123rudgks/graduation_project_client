@@ -41,7 +41,7 @@ export const PlaceCard = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  height: 50px;
+  height: 70px;
   margin: 10px 0;
   border: none;
   background-color: white;
@@ -56,12 +56,16 @@ export const PlaceCard = styled.div`
 `;
 
 export const IconDiv = styled.div`
-  & svg {
+position: absolute;
+right:8px;
+bottom:5px;
+display: flex;
+  /* & svg {
     cursor: pointer;
     position: absolute;
     right: 8px;
     bottom: 5px;
-  }
+  } */
   & svg:hover {
   }
 `;
