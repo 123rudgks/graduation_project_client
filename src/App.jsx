@@ -9,7 +9,7 @@ import { contexts } from './helpers/contexts';
 // * : pages
 import MapHome from './pages/MapHome/MapHome';
 import Login from './pages/User/Login';
-import Signin from './pages/User/Signin';
+import SignUp from './pages/User/SignUp';
 
 // * : css
 import './font/font.css';
@@ -27,7 +27,7 @@ function App() {
         <GlobalStyles />
         <Routes>
           <Route path="login" element={<Login />} />
-          <Route path="signin" element={<Signin />} />
+          <Route path="signup" element={<SignUp />} />
           <Route path="mapHome" element={<MapHome />} />
         </Routes>
       </ThemeProvider>

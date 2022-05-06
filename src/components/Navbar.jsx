@@ -8,6 +8,8 @@ import { NavLink } from 'react-router-dom';
 
 // * : styles
 const NavbarContainer = styled.nav`
+width: 100vw;
+  background-color: white;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -30,8 +32,9 @@ const MenuItem = styled(NavLink)`
   padding: 10px 10px;
   text-decoration: none;
   white-space: pre;
+  color: black;
   &:hover {
-    background-color: #d0d3d4;
+    background-color: ${(props)=>props.theme.mainColor};
     border-radius: 5px;
     cursor: pointer;
   }
@@ -54,7 +57,9 @@ function Navbar({ menus }) {
         {menus.map((menu) => (
           <MenuItem
             key={menu}
-            className={({ isActive }) => `nav-link ${isActive ? 'activated' : ''}`}
+            className={({ isActive }) =>
+              `nav-link ${isActive ? 'activated' : ''}`
+            }
             // end={menu.name === 'all'}
             to={menu === 'all' ? '/' : `/${menu}`}
           >
