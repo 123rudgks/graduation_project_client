@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import styled from 'styled-components';
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
+import { AuthContext } from '../../helpers/AuthContext'; 
 import {
   MainContainer,
   FormContainer,
@@ -14,10 +15,15 @@ import {
   ButtonContainer,
 } from '../../components/UserStyles/UserStyles';
 import SearchId from './SearchId';
+import SearchPassword from './SearchPassword';
 
 function Login() {
+  const {authState,setAuthState} = useContext(AuthContext);
   const [openSearchId, setOpenSearchId] = useState(false);
+  const [openSearchPassword, setOpenSearchPassword] = useState(false);
   const navigate = useNavigate();
+
+  // * : formik
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -36,19 +42,24 @@ function Login() {
       return;
     }
     if (!isLogin.data.error) {
-      navigate('../mapHome');
-      console.log('login success');
+      localStorage.setItem("accessToken", isLogin.data.access_token);
+      setAuthState({
+        username: isLogin.data.username,
+        email: isLogin.data.email,
+        status: true,
+      })
+      navigate(`../mapHome/${isLogin.data.username}`);
     } else {
       alert(isLogin.data.error);
     }
     },
   });
 
-  
   return (
     <MainContainer>
       <Navbar menus={['일정생성', '추천코스']} />
       {openSearchId && <SearchId setOpenSearchId={setOpenSearchId}/>}
+      {openSearchPassword && <SearchPassword setOpenSearchPassword={setOpenSearchPassword}/>}
       <FormContainer>
         <FormContents onSubmit={formik.handleSubmit}>
           <LoginText>
@@ -78,7 +89,7 @@ function Login() {
           />
           <ButtonContainer>
             <input type="button" value="ID 찾기" onClick={()=>setOpenSearchId(true)}/>
-            <input type="button" value="PW 찾기" />
+            <input type="button" value="PW 찾기" onClick={()=>setOpenSearchPassword(true)}/>
             <input
               type="button"
               value="회원가입"

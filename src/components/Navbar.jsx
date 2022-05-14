@@ -1,14 +1,16 @@
 // * : libraries
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
+import { AuthContext } from '../helpers/AuthContext';
+import { FaUserCircle } from 'react-icons/fa';
 // * : components
 // import { NavbarContainer, NavbarLogo, NavbarMenu } from './Navbar.styles';
 
 // * : styles
 const NavbarContainer = styled.nav`
-width: 100vw;
+  width: 100vw;
   background-color: white;
   box-sizing: border-box;
   display: flex;
@@ -29,20 +31,20 @@ const NavbarMenu = styled.ul`
   padding-left: 0px;
 `;
 const MenuItem = styled(NavLink)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 10px 10px;
   text-decoration: none;
   white-space: pre;
   color: black;
   &:hover {
-    background-color: ${(props)=>props.theme.mainColor};
+    background-color: ${(props) => props.theme.mainColor};
     border-radius: 5px;
     cursor: pointer;
   }
   &.active {
     border-bottom: 2px solid ${(props) => props.theme.mainColor};
-    &:hover {
-      color: ${(props) => props.theme.mainColor};
-    }
   }
   & + & {
     margin-left: 1rem;
@@ -50,6 +52,19 @@ const MenuItem = styled(NavLink)`
 `;
 
 function Navbar({ menus }) {
+  const { authState } = useContext(AuthContext);
+  const [menuMatching, setMenuMatching] = useState({
+    일정생성: `mapHome/${authState.username}`,
+    마이페이지: `myPage/${authState.username}`,
+  });
+
+  useEffect(() => {
+    setMenuMatching({
+      일정생성: `mapHome/${authState.username}`,
+      마이페이지: `myPage/${authState.username}`,
+    });
+  }, [authState]);
+
   return (
     <NavbarContainer>
       <NavbarLogo>[LOGO IMG]</NavbarLogo>
@@ -61,12 +76,10 @@ function Navbar({ menus }) {
               `nav-link ${isActive ? 'activated' : ''}`
             }
             // end={menu.name === 'all'}
-            to={menu === 'all' ? '/' : `/${menu}`}
+            to={menu === 'all' ? '/' : `/${menuMatching[menu]}`}
           >
-            {menu}
+            {menu === '마이페이지' ? <FaUserCircle size="25" /> : menu}
           </MenuItem>
-          // eslint-disable-next-line react/no-array-index-key
-          // <li key={index}>{menu}</li>
         ))}
       </NavbarMenu>
     </NavbarContainer>

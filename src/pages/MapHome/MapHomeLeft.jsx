@@ -17,6 +17,7 @@ import {
   PlaceCard,
   IconDiv,
 } from '../../components/MapHomeStyles/MapHomeRight.styles';
+import ConfirmSchedule from './ConfirmSchedule';
 // * : helpers
 import { contexts } from '../../helpers/contexts';
 
@@ -43,7 +44,7 @@ function MapHomeLeft() {
   });
   // 클릭한 날짜 정보 (날짜, 선택된 장소들)
   const { clickedDay, setClickedDay } = useContext(contexts);
-
+  const [isConfirmScheduleOpen, setIsConfirmScheduleOpen] = useState(false);
   // * : functions
   // 각 day title 클릭 시 clicked 변경 함수
   const onDayTitle = (index) => {
@@ -148,7 +149,15 @@ function MapHomeLeft() {
           </DayBox>
         ))}
       </Contents>
-      <CreateBtn>일정 생성</CreateBtn>
+      <CreateBtn onClick={()=>setIsConfirmScheduleOpen(true)}>일정 생성</CreateBtn>
+      {isConfirmScheduleOpen && <ConfirmSchedule setIsConfirmScheduleOpen={setIsConfirmScheduleOpen} scheduleInfo={
+        {
+          area:'제주도',
+          startDateStr,
+          endDateStr,
+          days
+        }
+      }/>}
     </>
   );
 }

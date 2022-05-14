@@ -157,7 +157,7 @@ function SignUp() {
             <EmailBtn type="button" value="확인" onClick={onEmailCheck} />
           </EmailDiv>
           <ButtonContainer>
-            <input type="button" value="취소" />
+            <input type="button" value="취소" onClick={()=>{navigate('../login')}}/>
             <input type="submit" value="회원 가입" />
           </ButtonContainer>
         </FormContents>
