@@ -1,12 +1,16 @@
-import React, { useContext, useEffect } from 'react';
-import styled from 'styled-components';
-import { AuthContext } from '../../helpers/AuthContext';
+// * : library
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-// * : pages
+import styled from 'styled-components';
+// * : helpers
+import { AuthContext } from '../../helpers/AuthContext';
+// * : components
 import Navbar from '../../components/Navbar';
 import { MapHomeRightTopBtn } from '../../components/MapHomeStyles/MapHomeRight.styles';
-
+import MyPageDetail from './MyPageDetail';
+/* ------------------------------------------------------------------------------------------------------------ */
+// * : styled Components
 const MyPageContainer = styled.div`
   font-family: ${(props) => props.theme.defaultFont};
   height: 100vh;
@@ -48,47 +52,67 @@ const ScheduleCard = styled.div`
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   margin: 20px;
   width: 200px;
-  height: 250px;
+  height: 240px;
   display: flex;
   flex-direction: column;
   &:hover {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25), 0 5px 18px rgba(0, 0, 0, 0.2);
   }
   & img {
-    flex: 3;
+    height: 180px;
   }
   & div {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 1.1rem;
+  }
+  & .tripDate {
+    font-size: 0.8rem;
+    color: ${(props) => props.theme.grayBgColor};
   }
 `;
-
+// * : Main Function
 function MyPage() {
+  // * : states
+  const [myPageHistory, setMyPageHistory] = useState([]);
+  const [isConfirmScheduleOpen, setIsConfirmScheduleOpen] = useState(false);
+  const [historyDetailInfo, setHistoryDetailInfo] = useState({
+    area:'',
+    startDay:'',
+    endDay:'',
+    title:'',
+    description:'',
+    places:[],
+  });
+  // * : hooks
   const { authState, setAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { username } = useParams();
+  const { username,id } = useParams();
 
+  // * : functions
   const onLogout = () => {
     localStorage.removeItem('accessToken');
     setAuthState({ username: '', email: '', status: false });
     // ! : 홈 화면 생성 이후 홈으로 이동
     navigate('/login');
   };
-  // * : User accessToken authorization
+  const onDetail = (historyId) => {
+    console.log(historyId);
+    navigate(`./${historyId}`)
+  };
+  //  마이페이지 정보 받아오기
   useEffect(async () => {
-    // ! : 유효한 accessToken인지 백과 비교해보기
-    // ! : accessToken을 서버로 보내서 유저 정보 다시 로딩하기
     if (!localStorage.getItem('accessToken')) {
       navigate('/login');
     }
+    // user 정보 갱신 by accessToken
     let basicInfo;
     try {
       basicInfo = await axios.get(
         `http://localhost:3001/users/basicInfo/${username}`,
       );
-      console.log(basicInfo);
       setAuthState({
         username: basicInfo.data.username,
         email: basicInfo.data.email,
@@ -97,85 +121,76 @@ function MyPage() {
     } catch (e) {
       console.log(e);
     }
-
+    // 일정들 받아오기
     try {
       const myPageHistory = await axios.get(
         `http://localhost:3001/users/mypage-trip-history/${basicInfo.data.username}`,
       );
-      console.log(myPageHistory);
+      console.log(myPageHistory.data);
+      setMyPageHistory(myPageHistory.data);
     } catch (e) {
       console.log(e);
     }
   }, []);
+  // detail 정보 표기
+  useEffect(async ()=>{
+    if(id){
+      try{
+        const historyDetail = await axios.get(
+          `http://localhost:3001/users/trip-schedule/${authState.username}/${id}`,
+        );
+        myPageHistory.map((history)=>{
+          if(history.id.toString() === id){
+            const tempDetail = {
+              area: history.area,
+              title: history.tripTitle,
+              description: history.description,
+              startDay: history.startDay,
+              endDay: history.endDay,
+              places: historyDetail.data,
+            }
+            setHistoryDetailInfo(tempDetail);
+            return;
+          }
+        });
+        setIsConfirmScheduleOpen(true);
+        // console.log(historyDetail.data);
+      }catch(e){
+        setIsConfirmScheduleOpen(true);
+        console.log(e);
+
+      }
+    }
+  },[id])
   return (
     <MyPageContainer>
       <Navbar menus={['일정생성', '마이페이지']} />
       <MyPageContent>
         <MyPageHeader>
           <h1>{`${authState.username}의 여행기록`}</h1>
-          <MapHomeRightTopBtn clicked={true}>회원정보수정</MapHomeRightTopBtn>
+          <MapHomeRightTopBtn clicked={true} >회원정보수정</MapHomeRightTopBtn>
           <MapHomeRightTopBtn clicked={true} onClick={onLogout}>
             로그아웃
           </MapHomeRightTopBtn>
         </MyPageHeader>
         <MyPageBody>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
-          <ScheduleCard>
-            <img src="https://i.ytimg.com/vi/b87fOgsKEZw/maxresdefault.jpg" />
-            <div>일정제목</div>
-            <div>생성날짜</div>
-          </ScheduleCard>
+          {myPageHistory.map((history) => {
+            return (
+              <ScheduleCard key={history.id} onClick={() => onDetail(history.id)}>
+                <img src={history.thumbnail} />
+                <div>{history.tripTitle}</div>
+                <div className="tripDate">{`${history.startDay} ~ ${history.endDay}`}</div>
+              </ScheduleCard>
+            );
+          })}
         </MyPageBody>
       </MyPageContent>
+      {isConfirmScheduleOpen && (
+        <MyPageDetail
+          setIsConfirmScheduleOpen={setIsConfirmScheduleOpen}
+          scheduleInfo={historyDetailInfo}
+        />
+      )}
     </MyPageContainer>
   );
 }

@@ -57,6 +57,7 @@ function App() {
             <Route path="signup" element={<SignUp />} />
             <Route path="mapHome/:username" element={<MapHome />} />
             <Route path="MyPage/:username" element={<MyPage />} />
+            <Route path="MyPage/:username/:id" element={<MyPage />} />
           </Routes>
         </ThemeProvider>
       </AuthContext.Provider>

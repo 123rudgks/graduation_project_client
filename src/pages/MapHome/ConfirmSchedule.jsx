@@ -1,10 +1,15 @@
+// * : library
 import React, { useState, useContext } from 'react';
-import styled from 'styled-components';
-import {AuthContext} from '../../helpers/AuthContext'
-import { ImArrowRight } from 'react-icons/im';
-import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
+// * : helpers
+import { AuthContext } from '../../helpers/AuthContext';
+// * : components
+import { ImArrowRight } from 'react-icons/im';
+/* ------------------------------------------------------------------------------------------------------------ */
+// * : styled Components
 const ConfirmBackground = styled.div`
   position: absolute;
   top: 50%;
@@ -59,7 +64,6 @@ const DescriptionInput = styled.input`
   width: 80%;
   height: 40px;
 `;
-
 const ScheduleContainer = styled.div`
   flex: auto;
   overflow: auto;
@@ -125,12 +129,20 @@ const ButtonContainer = styled.div`
   }
 `;
 
+// * : Main Function
 function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
-  const [description, setDescription] = useState();
-  const [title, setTitle] = useState();
-  const {authState} = useContext(AuthContext);
-
+  // * : states
+  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState('');
+  // * : hooks
+  const { authState } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // * : functions
   const onSubmit = async () => {
+    if(!title){
+      alert("일지 제목을 작성해주세요");
+      return;
+    }
     await axios
       .post(
         'http://localhost:3001/users/trip-schedule',
@@ -138,7 +150,7 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
           username: authState.username,
           area: scheduleInfo.area,
           startDate: scheduleInfo.startDateStr,
-          thumbnail: '',
+          thumbnail: scheduleInfo.days[0].places[0].img,
           endDate: scheduleInfo.endDateStr,
           tripTitle: title,
           description,
@@ -147,9 +159,13 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
         { headers: { access_token: localStorage.getItem('accessToken') } },
       )
       .then((res) => {
-        console.log(res);
+        alert('저장 되었습니다.');
+        navigate(`/myPage/${authState.username}`);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        alert('저장 실패 : error 발생');
+        console.log(e);
+      });
   };
 
   // {
@@ -233,9 +249,28 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
   );
 }
 
+// * : prop Validation
 ConfirmSchedule.propTypes = {
   setIsConfirmScheduleOpen: PropTypes.func.isRequired,
   scheduleInfo: PropTypes.object.isRequired,
 };
 
+export {
+  ConfirmBackground,
+  ConfirmContainer,
+  DescriptionContainer,
+  DescriptionContents,
+  DescriptionInputContainer,
+  DescriptionTitle,
+  DescriptionInput,
+  ScheduleContainer,
+  DayContainer,
+  Day,
+  DayCard,
+  Places,
+  CardContainer,
+  PlacesCard,
+  ArrowCard,
+  ButtonContainer,
+};
 export default ConfirmSchedule;
