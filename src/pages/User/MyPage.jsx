@@ -93,10 +93,11 @@ function MyPage() {
 
   // * : functions
   const onLogout = () => {
+    alert('로그아웃 되었습니다.');
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('username');
     setAuthState({ username: '', email: '', status: false });
-    // ! : 홈 화면 생성 이후 홈으로 이동
-    navigate('/login');
+    navigate('/');
   };
   const onDetail = (historyId) => {
     console.log(historyId);
@@ -104,6 +105,9 @@ function MyPage() {
   };
   //  마이페이지 정보 받아오기
   useEffect(async () => {
+    if(!username){
+      navigate('/login');
+    }
     if (!localStorage.getItem('accessToken')) {
       navigate('/login');
     }

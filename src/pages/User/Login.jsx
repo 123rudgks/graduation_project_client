@@ -43,12 +43,13 @@ function Login() {
     }
     if (!isLogin.data.error) {
       localStorage.setItem("accessToken", isLogin.data.access_token);
+      localStorage.setItem("username", isLogin.data.username );
       setAuthState({
         username: isLogin.data.username,
         email: isLogin.data.email,
         status: true,
       })
-      navigate(`../mapHome/${isLogin.data.username}`);
+      navigate(`/`);
     } else {
       alert(isLogin.data.error);
     }

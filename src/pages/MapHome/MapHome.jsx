@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import {useParams} from 'react-router-dom'
 import axios from 'axios';
 // * : helpers
-import { contexts } from '../../helpers/contexts';
+import { contexts, tripInfoContext } from '../../helpers/contexts';
 import { AuthContext } from "../../helpers/AuthContext";
 // * : components
 import {
@@ -20,7 +20,7 @@ import MapHomeLeft from './MapHomeLeft';
 import { useNavigate } from 'react-router-dom';
 
 function MapHome() {
-  const {authState,setAuthState} = useContext(AuthContext);
+  const {authState,setAuthState,tripInfo, setTripInfo} = useContext(AuthContext);
   const navigate = useNavigate();
   // 지도위에 찍혀 있는 마커들 배열
   const [markers, setMarkers] = useState([]);
@@ -29,8 +29,10 @@ function MapHome() {
   const {username} = useParams();
 
   useEffect(async ()=>{
-    // ! : 유효한 accessToken인지 백과 비교해보기
-    // ! : accessToken 서버로 보내서 유저정보 갱신하기
+    if(!username){
+      console.log('id가 없음')
+      navigate("/login");
+    }
     if(!localStorage.getItem("accessToken")){
       navigate("/login");
     }
@@ -60,7 +62,6 @@ function MapHome() {
         }}
       >
         <Navbar menus={['Menu1', 'Menu2', '마이페이지']} />
-
         <MapHomeContainer>
           <MapHomeLeftContainer>
             <MapHomeLeft />

@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../helpers/AuthContext';
 import { FaUserCircle } from 'react-icons/fa';
 // * : components
@@ -57,6 +57,7 @@ function Navbar({ menus }) {
     일정생성: `mapHome/${authState.username}`,
     마이페이지: `myPage/${authState.username}`,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMenuMatching({

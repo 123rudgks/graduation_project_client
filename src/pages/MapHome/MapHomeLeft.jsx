@@ -19,12 +19,15 @@ import {
 } from '../../components/MapHomeStyles/MapHomeRight.styles';
 import ConfirmSchedule from './ConfirmSchedule';
 // * : helpers
-import { contexts } from '../../helpers/contexts';
+import { contexts ,tripInfoContext} from '../../helpers/contexts';
+import {AuthContext} from '../../helpers/AuthContext';
+
 
 function MapHomeLeft() {
+  const {tripInfo, setTripInfo} = useContext(AuthContext);
   // * : 임시로 만든 변수들. 차후 수정 요함
-  const startDate = new Date(2022,3,22);
-  const endDate = new Date(2022,3,24);
+  const startDate = tripInfo.startDate;
+  const endDate = tripInfo.endDate;
   const totalPeriod = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   const startDateStr = `${startDate.getFullYear()}.${
     startDate.getMonth()+1 
@@ -107,7 +110,7 @@ function MapHomeLeft() {
           onClearDay();
         }}
       >
-        <div>제주도</div>
+        <div>{tripInfo.area}</div>
         <div>{`${startDateStr} ~ ${endDateStr}`}</div>
       </Header>
       <Contents

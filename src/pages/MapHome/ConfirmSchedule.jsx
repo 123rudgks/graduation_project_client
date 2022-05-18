@@ -143,6 +143,16 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
       alert("일지 제목을 작성해주세요");
       return;
     }
+    console.log({
+      username: authState.username,
+      area: scheduleInfo.area,
+      startDate: scheduleInfo.startDateStr,
+      thumbnail: scheduleInfo.days[0].places[0].img,
+      endDate: scheduleInfo.endDateStr,
+      tripTitle: title,
+      description,
+      days: scheduleInfo.days,
+    });
     await axios
       .post(
         'http://localhost:3001/users/trip-schedule',
@@ -156,7 +166,7 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
           description,
           days: scheduleInfo.days,
         },
-        { headers: { access_token: localStorage.getItem('accessToken') } },
+        { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
       )
       .then((res) => {
         alert('저장 되었습니다.');
