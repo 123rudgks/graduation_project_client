@@ -26,8 +26,8 @@ import {AuthContext} from '../../helpers/AuthContext';
 function MapHomeLeft() {
   const {tripInfo, setTripInfo} = useContext(AuthContext);
   // * : 임시로 만든 변수들. 차후 수정 요함
-  const startDate = tripInfo.startDate;
-  const endDate = tripInfo.endDate;
+  const startDate = new Date(localStorage.getItem('startDate'));
+  const endDate = new Date(localStorage.getItem('endDate'));
   const totalPeriod = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
   const startDateStr = `${startDate.getFullYear()}.${
     startDate.getMonth()+1 
@@ -110,7 +110,7 @@ function MapHomeLeft() {
           onClearDay();
         }}
       >
-        <div>{tripInfo.area}</div>
+        <div>{localStorage.getItem('area')}</div>
         <div>{`${startDateStr} ~ ${endDateStr}`}</div>
       </Header>
       <Contents

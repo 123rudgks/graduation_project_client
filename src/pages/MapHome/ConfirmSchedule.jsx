@@ -1,5 +1,5 @@
 // * : library
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -139,8 +139,8 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
   const navigate = useNavigate();
   // * : functions
   const onSubmit = async () => {
-    if(!title){
-      alert("일지 제목을 작성해주세요");
+    if (!title) {
+      alert('일지 제목을 작성해주세요');
       return;
     }
     console.log({
@@ -170,6 +170,9 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
       )
       .then((res) => {
         alert('저장 되었습니다.');
+        localStorage.removeItem('area');
+        localStorage.removeItem('startDate');
+        localStorage.removeItem('endDate');
         navigate(`/myPage/${authState.username}`);
       })
       .catch((e) => {
@@ -177,6 +180,8 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
         console.log(e);
       });
   };
+
+ 
 
   // {
   //   "day" : 1,

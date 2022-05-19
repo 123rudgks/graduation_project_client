@@ -292,10 +292,11 @@ function MapHomeRight() {
   };
 
   const sendKeyword = async (keyword) => {
+    const area = localStorage.getItem('area');
     try {
       const res = await axios.post(
         `http://localhost:3001/recommend-${keyword}/search-keyword`,
-        { keyword: '제주' },
+        { keyword: area},
       );
       //console.log(data.data.response.body.items.item);
       const dataArr = res.data.response.body.items.item;

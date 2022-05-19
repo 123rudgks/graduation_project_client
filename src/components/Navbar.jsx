@@ -7,7 +7,7 @@ import { AuthContext } from '../helpers/AuthContext';
 import { FaUserCircle } from 'react-icons/fa';
 // * : components
 // import { NavbarContainer, NavbarLogo, NavbarMenu } from './Navbar.styles';
-
+import logoImg from '../img/logo.svg';
 // * : styles
 const NavbarContainer = styled.nav`
   width: 100vw;
@@ -17,13 +17,16 @@ const NavbarContainer = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  height: 60px;
+  height: 70px;
   box-shadow: 0px -3px 3px 0px #f0f0f0 inset;
   font-family: ${(props) => props.theme.defaultFont};
 `;
-const NavbarLogo = styled.div`
-  font-size: 24px;
-  color: cadetblue;
+const NavbarLogo = styled.img`
+  width:100px;
+  height:44px;
+  object-fit: fill;
+  margin-bottom: 10px;
+  cursor: pointer;
 `;
 const NavbarMenu = styled.ul`
   display: flex;
@@ -54,21 +57,21 @@ const MenuItem = styled(NavLink)`
 function Navbar({ menus }) {
   const { authState } = useContext(AuthContext);
   const [menuMatching, setMenuMatching] = useState({
-    일정생성: `mapHome/${authState.username}`,
+    일정생성: `../`,
     마이페이지: `myPage/${authState.username}`,
   });
   const navigate = useNavigate();
 
   useEffect(() => {
     setMenuMatching({
-      일정생성: `mapHome/${authState.username}`,
+      일정생성: `../`,
       마이페이지: `myPage/${authState.username}`,
     });
   }, [authState]);
 
   return (
     <NavbarContainer>
-      <NavbarLogo>[LOGO IMG]</NavbarLogo>
+      <NavbarLogo src={logoImg} onClick={()=>navigate('/')}></NavbarLogo>
       <NavbarMenu>
         {menus.map((menu) => (
           <MenuItem

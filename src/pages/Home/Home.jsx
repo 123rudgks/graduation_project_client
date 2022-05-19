@@ -63,6 +63,7 @@ const AreaContainor = styled.div`
     width: 400px;
     height: 40px;
     padding: 3px;
+    margin-bottom: 15px;
 
     & #magnifyingIcon {
       margin-left: 5px;
@@ -181,16 +182,50 @@ const Footer = styled.div`
 `;
 const areas = [
   {
-    area: '제주도',
-    img: 'https://a.cdn-hotels.com/gdcs/production69/d1911/913619a9-f618-47db-b2a2-3ca277ad2226.jpg',
+    area: '서울',
+    img: 'https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/6emG/image/ricOCxnz_i_AJbRNyQv7krfaoug',
+    areaLoc: [37.566535,126.9779692]
+  },
+  {
+    area: '인천',
+    img: 'https://www.ito.or.kr/images/bbs/galleryko/2021/middle/yeonsugu_songdosenteulealpakeu_gongwon_(2).jpg',
+    areaLoc: [37.4562557,126.7052062]
+  },
+  {
+    area: '대구',
+    img: 'https://t1.daumcdn.net/cfile/tistory/230F83505472EBDB22',
+    areaLoc: [35.8714354,128.601445]
   },
   {
     area: '경주',
     img: 'https://t1.daumcdn.net/cfile/tistory/999CF54B5D97530B10',
+    areaLoc: [35.8561719,129.2247477]
   },
+  {
+    area: '안동',
+    img: 'https://www.tourandong.com/_cs_/thumb.cshtml/tour/1178/19%EC%9E%85%EC%84%A0%20%EA%B9%80%EA%B2%BD%EC%88%99%20%EC%9B%94%EC%98%81%EA%B5%90%EC%9D%98%20%EB%B4%84.jpg?size=1200x1200',
+    areaLoc: [36.5683543,128.729357]
+  },
+  
   {
     area: '부산',
     img: 'https://www.busan.go.kr/resource/img/geopark/sub/busantour/busantour1.jpg',
+    areaLoc: [35.1795543,129.0756416]
+  },
+  {
+    area: '통영',
+    img: 'https://file.mk.co.kr/meet/neds/2019/05/image_readtop_2019_311767_15589178283745416.jpg',
+    areaLoc: [34.8544227,128.433182]
+  },
+  {
+    area: '강릉',
+    img: 'https://www.gtdc.or.kr/dzSmart/upfiles/Tours/2018June/25/0ed417274081bfc2724596f96a1200fc_1529310659.jpg',
+    areaLoc: [37.751853,128.8760574]
+  },
+  {
+    area: '제주',
+    img: 'https://a.cdn-hotels.com/gdcs/production69/d1911/913619a9-f618-47db-b2a2-3ca277ad2226.jpg',
+    areaLoc: [33.38544662494779, 126.5550319629174]
   },
 ];
 function Home() {
@@ -200,14 +235,24 @@ function Home() {
   const navigate = useNavigate();
 
   const onCardClick = (area) => {
-    setTripInfo({ ...tripInfo, area: area.area });
+    setSearchArea(area.area);
+    setTripInfo({ ...tripInfo, area: area.area ,areaLoc: area.areaLoc});
   };
   const onMapHome = () => {
-    if(!localStorage.getItem('username')){
-      alert('로그인이 필요한 기능입니다.')
+    if (!localStorage.getItem('username')) {
+      alert('로그인이 필요한 기능입니다.');
       navigate('/login');
       return;
     }
+    if (!tripInfo.area) {
+      alert('여행지를 선택해주세요');
+      return;
+    }
+    localStorage.setItem('area', tripInfo.area);
+    localStorage.setItem('startDate', tripInfo.startDate);
+    localStorage.setItem('endDate', tripInfo.endDate);
+    localStorage.setItem('area_lat', tripInfo.areaLoc[0]);
+    localStorage.setItem('area_lng', tripInfo.areaLoc[1]);
     navigate(`/mapHome/${localStorage.getItem('username')}`);
   };
   const onInit = () => {
@@ -216,7 +261,6 @@ function Home() {
   useEffect(() => {
     setTripInfo({ ...tripInfo, startDate: value[0], endDate: value[1] });
   }, [value]);
-
 
   return (
     <HomeContainer>
@@ -232,7 +276,10 @@ function Home() {
           <BsSearch id="magnifyingIcon" size="23" />
           <input
             value={searchArea}
-            onChange={(e) => setSearchArea(e.target.value)}
+            onChange={(e) => {
+              setTripInfo({...tripInfo,area:''});
+              setSearchArea(e.target.value);
+            }}
           />
         </div>
         <AreaCardContainor>

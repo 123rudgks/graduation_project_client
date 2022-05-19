@@ -26,11 +26,7 @@ border:none;">
 <div>${distance || '? '}km</div>
 <div>${time || '? '}</div>
 </div>`;
-// 지도 기본 설정
-const mapOptions = {
-  center: new window.naver.maps.LatLng(33.38544662494779, 126.5550319629174),
-  zoom: 11,
-};
+
 
 function NaverMap() {
   // * : 변수들
@@ -40,10 +36,16 @@ function NaverMap() {
   const [mileStones, setMileStones] = useState([]);
   const [polyLines, setPolyLines] = useState([]);
   const [dayPolyLines, setDayPolyLines] = useState([]);
+  const [centerLoc, setCenterLoc] = useState([]);
 
   // 첫 우클릭 체크 용
   // const count = useRef(-1);
   // 중심좌표
+  // 지도 기본 설정
+  const mapOptions = {
+    center: new window.naver.maps.LatLng(centerLoc[0], centerLoc[1]),
+    zoom: 11,
+  };
   const centerPoint = useRef({ point: null, title: '' });
   let map;
   // * : 함수
@@ -80,14 +82,16 @@ function NaverMap() {
   //   return polyline;
   // };
 
-  const getInfoFromCenterPoint = (point) =>
-    axios.post('http://localhost:3001/compare-distance', {
+  const getInfoFromCenterPoint = (point) => {
+    return axios.post('http://localhost:3001/compare-distance', {
       start: [
         centerPoint.current.point['_lng'],
         centerPoint.current.point['_lat'],
       ],
       goal: [point['_lng'], point['_lat']],
     });
+  };
+
   const milliToTime = (milliSec) => {
     const hour = Math.floor((milliSec / (1000 * 60 * 60)) % 24);
     const minute = Math.floor(
@@ -99,6 +103,13 @@ function NaverMap() {
     return `${minute}분`;
   };
 
+  // 중심 좌표 설정
+  useEffect(()=>{
+    setCenterLoc([
+      localStorage.getItem('area_lat'),
+      localStorage.getItem('area_lng'),
+    ])
+  },[])
   // day 변경되었을 경우 dayPolyline 변경
   useEffect(() => {
     setDayPolyLines({
@@ -175,6 +186,7 @@ function NaverMap() {
             // mileStone 추가
             try {
               const roadInfo = await getInfoFromCenterPoint(point);
+              console.log('readInfo', roadInfo);
               const { distance, time } = roadInfo.data;
               setMileStones(
                 mileStones.concat({

@@ -79,17 +79,17 @@ function MyPage() {
   const [myPageHistory, setMyPageHistory] = useState([]);
   const [isConfirmScheduleOpen, setIsConfirmScheduleOpen] = useState(false);
   const [historyDetailInfo, setHistoryDetailInfo] = useState({
-    area:'',
-    startDay:'',
-    endDay:'',
-    title:'',
-    description:'',
-    places:[],
+    area: '',
+    startDay: '',
+    endDay: '',
+    title: '',
+    description: '',
+    places: [],
   });
   // * : hooks
   const { authState, setAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { username,id } = useParams();
+  const { username, id } = useParams();
 
   // * : functions
   const onLogout = () => {
@@ -100,12 +100,11 @@ function MyPage() {
     navigate('/');
   };
   const onDetail = (historyId) => {
-    console.log(historyId);
-    navigate(`./${historyId}`)
+    navigate(`./${historyId}`);
   };
   //  마이페이지 정보 받아오기
   useEffect(async () => {
-    if(!username){
+    if (!localStorage.getItem('username')) {
       navigate('/login');
     }
     if (!localStorage.getItem('accessToken')) {
@@ -115,7 +114,9 @@ function MyPage() {
     let basicInfo;
     try {
       basicInfo = await axios.get(
-        `http://localhost:3001/users/basicInfo/${username}`,
+        `http://localhost:3001/users/basicInfo/${localStorage.getItem(
+          'username',
+        )}`,
       );
       setAuthState({
         username: basicInfo.data.username,
@@ -129,22 +130,42 @@ function MyPage() {
     try {
       const myPageHistory = await axios.get(
         `http://localhost:3001/users/mypage-trip-history/${basicInfo.data.username}`,
+        { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
       );
-      console.log(myPageHistory.data);
-      setMyPageHistory(myPageHistory.data);
+      if (myPageHistory.data.error) {
+        try {
+          const newAccessToken = await axios.post(
+            `http://localhost:3001/users/token`,
+            {
+              username: localStorage.getItem('username'),
+            },
+            {
+              headers: { 'x-auth-token': localStorage.getItem('accessToken') },
+            },
+          );
+          if(newAccessToken.errors){
+            navigate('/login');
+            return;
+          }
+         localStorage.setItem('accessToken',newAccessToken.data.accessToken);
+        } catch (e) {console.log(e)}
+      } else {
+        setMyPageHistory(myPageHistory.data);
+      }
     } catch (e) {
-      console.log(e);
+      console.log('Error', e);
     }
   }, []);
   // detail 정보 표기
-  useEffect(async ()=>{
-    if(id){
-      try{
+  useEffect(async () => {
+    if (id) {
+      try {
         const historyDetail = await axios.get(
           `http://localhost:3001/users/trip-schedule/${authState.username}/${id}`,
+          { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
         );
-        myPageHistory.map((history)=>{
-          if(history.id.toString() === id){
+        myPageHistory.map((history) => {
+          if (history.id.toString() === id) {
             const tempDetail = {
               area: history.area,
               title: history.tripTitle,
@@ -152,27 +173,26 @@ function MyPage() {
               startDay: history.startDay,
               endDay: history.endDay,
               places: historyDetail.data,
-            }
+            };
             setHistoryDetailInfo(tempDetail);
             return;
           }
         });
         setIsConfirmScheduleOpen(true);
         // console.log(historyDetail.data);
-      }catch(e){
+      } catch (e) {
         setIsConfirmScheduleOpen(true);
         console.log(e);
-
       }
     }
-  },[id])
+  }, [id]);
   return (
     <MyPageContainer>
       <Navbar menus={['일정생성', '마이페이지']} />
       <MyPageContent>
         <MyPageHeader>
           <h1>{`${authState.username}의 여행기록`}</h1>
-          <MapHomeRightTopBtn clicked={true} >회원정보수정</MapHomeRightTopBtn>
+          <MapHomeRightTopBtn clicked={true}>회원정보수정</MapHomeRightTopBtn>
           <MapHomeRightTopBtn clicked={true} onClick={onLogout}>
             로그아웃
           </MapHomeRightTopBtn>
@@ -180,7 +200,10 @@ function MyPage() {
         <MyPageBody>
           {myPageHistory.map((history) => {
             return (
-              <ScheduleCard key={history.id} onClick={() => onDetail(history.id)}>
+              <ScheduleCard
+                key={history.id}
+                onClick={() => onDetail(history.id)}
+              >
                 <img src={history.thumbnail} />
                 <div>{history.tripTitle}</div>
                 <div className="tripDate">{`${history.startDay} ~ ${history.endDay}`}</div>

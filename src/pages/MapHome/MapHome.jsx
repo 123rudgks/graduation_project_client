@@ -1,10 +1,10 @@
 // * : libraries
 import React, { useState, useContext, useEffect } from 'react';
-import {useParams} from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 // * : helpers
 import { contexts, tripInfoContext } from '../../helpers/contexts';
-import { AuthContext } from "../../helpers/AuthContext";
+import { AuthContext } from '../../helpers/AuthContext';
 // * : components
 import {
   MapHomeDiv,
@@ -20,22 +20,33 @@ import MapHomeLeft from './MapHomeLeft';
 import { useNavigate } from 'react-router-dom';
 
 function MapHome() {
-  const {authState,setAuthState,tripInfo, setTripInfo} = useContext(AuthContext);
+  const { authState, setAuthState, tripInfo, setTripInfo } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   // 지도위에 찍혀 있는 마커들 배열
   const [markers, setMarkers] = useState([]);
   // 날짜 클릭시 해당하는 날짜 정보
   const [clickedDay, setClickedDay] = useState({ day: 0, places: [], img: '' });
-  const {username} = useParams();
+  const { username } = useParams();
 
-  useEffect(async ()=>{
-    if(!username){
-      console.log('id가 없음')
-      navigate("/login");
+  useEffect(async () => {
+    if (!username) {
+      console.log('id가 없음');
+      navigate('/login');
     }
-    if(!localStorage.getItem("accessToken")){
-      navigate("/login");
+    if (!localStorage.getItem('accessToken')) {
+      navigate('/login');
     }
+
+    if (
+      !localStorage.getItem('area') ||
+      !localStorage.getItem('area_lng') ||
+      !localStorage.getItem('area_lat') ||
+      !localStorage.getItem('startDate' || !localStorage.getItem('endDate'))
+    ) {
+      navigate('../');
+    }
+
     let basicInfo;
     try {
       basicInfo = await axios.get(
@@ -49,7 +60,7 @@ function MapHome() {
     } catch (e) {
       console.log(e);
     }
-  },[])
+  }, []);
   return (
     <MapHomeDiv>
       <contexts.Provider
