@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { AuthContext } from '../../helpers/AuthContext';
 import {
   MainContainer,
   FormContainer,
@@ -40,9 +41,21 @@ const EmailDiv = styled.div`
 function ChangePw({ setOpenChangePw }) {
   const [newPassword, setNewPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
-  const onChange = () => {
+  const { authState, setAuthState } = useContext(AuthContext);
+  const onChange = async () => {
     if(newPassword === checkPassword){
-      alert("변경완료");
+      try{
+        const isChanged = await axios.put('http://localhost:3001/users/change-password',{
+          email: authState.email,
+          newPassword
+        });
+        console.log(isChanged);
+        if(!isChanged.data.errors){
+          alert("변경완료");
+        }
+      }catch(e){
+        console.log(e);
+      }
       return;
     }
     alert("비밀번호 확인 요망");

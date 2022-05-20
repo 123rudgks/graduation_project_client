@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { AuthContext } from '../../helpers/AuthContext';
 import {
   MainContainer,
   FormContainer,
@@ -42,10 +43,23 @@ const EmailBtn = styled.input`
 `;
 function ChangeId({ username, setOpenChangeId }) {
   const [newUserName, setNewUserName] = useState('');
-  const onChange = () => {
+  const { authState, setAuthState } = useContext(AuthContext);
+  const onChange = async () => {
     if (!newUserName) {
       alert('username을 작성해주세요');
       return;
+    }
+    try{
+      const isChanged = await axios.put('http://localhost:3001/users/change-username',{
+        email: authState.email,
+        newUsername: newUserName,
+      });
+      console.log(isChanged);
+      if(!isChanged.data.errors){
+        localStorage.setItem("username",newUserName);
+      }
+    }catch(e){
+      console.log(e);
     }
     alert("변경완료")
   };
