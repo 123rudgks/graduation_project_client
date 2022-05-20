@@ -2,6 +2,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useBeforeunload } from "react-beforeunload";
 // * : helpers
 import { contexts, tripInfoContext } from '../../helpers/contexts';
 import { AuthContext } from '../../helpers/AuthContext';
@@ -29,6 +30,9 @@ function MapHome() {
   const [clickedDay, setClickedDay] = useState({ day: 0, places: [], img: '' });
   const { username } = useParams();
 
+  useBeforeunload((event) => { 
+    event.preventDefault();
+  });
   useEffect(async () => {
     if (!username) {
       console.log('id가 없음');

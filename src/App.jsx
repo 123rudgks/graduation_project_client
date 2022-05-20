@@ -14,6 +14,7 @@ import MapHome from './pages/MapHome/MapHome';
 import Login from './pages/User/Login';
 import SignUp from './pages/User/SignUp';
 import MyPage from './pages/User/MyPage';
+import UpdateUser from './pages/User/UpdateUser';
 
 // * : css
 import './font/font.css';
@@ -36,6 +37,17 @@ function App() {
     startDate: '',
     endDate: '',
   });
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('username');
+      localStorage.removeItem('area_lat');
+      localStorage.removeItem('area_lng');
+      localStorage.removeItem('startDate');
+      localStorage.removeItem('endDate');
+      localStorage.removeItem('area');
+    };
+  }, []);
 
   // !: accessToken으로 로그인 유지하기
   // useEffect(async ()=>{
@@ -56,20 +68,23 @@ function App() {
   // },[])
   return (
     <BrowserRouter>
-      <AuthContext.Provider value={{ authState, setAuthState,tripInfo, setTripInfo }}>
-          <ThemeProvider theme={theme}>
-            <GlobalStyles />
-            <Routes>
-              <Route index element={<Home />} />
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<SignUp />} />
-              <Route path="mapHome" element={<MapHome />} />
-              <Route path="mapHome/:username" element={<MapHome />} />
-              <Route path="MyPage" element={<MyPage />} />
-              <Route path="MyPage/:username" element={<MyPage />} />
-              <Route path="MyPage/:username/:id" element={<MyPage />} />
-            </Routes>
-          </ThemeProvider>
+      <AuthContext.Provider
+        value={{ authState, setAuthState, tripInfo, setTripInfo }}
+      >
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <Routes>
+            <Route index element={<Home />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route path="mapHome" element={<MapHome />} />
+            <Route path="mapHome/:username" element={<MapHome />} />
+            <Route path="MyPage" element={<MyPage />} />
+            <Route path="MyPage/:username" element={<MyPage />} />
+            <Route path="MyPage/:username/:id" element={<MyPage />} />
+            <Route path="updateUser" element={<UpdateUser />} />
+          </Routes>
+        </ThemeProvider>
       </AuthContext.Provider>
     </BrowserRouter>
   );

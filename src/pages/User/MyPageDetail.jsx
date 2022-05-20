@@ -1,6 +1,6 @@
 // * : library
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
@@ -62,14 +62,58 @@ const placesConvertor = (places) => {
   return transforedPlaces;
 };
 function MyPageDetail({ setIsConfirmScheduleOpen, scheduleInfo }) {
+  // unmount시에 setIsCon.. false로 변경
   const [formedPlaces, setFormedPlaces] = useState([]);
   const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
-  const onDeleteSchedule = () => {
-    console.log(scheduleInfo.page_id);
+  const { id, username } = useParams();
+
+
+  const onDeleteSchedule = async () => {
+    try {
+      const newAccessToken = await axios.post(
+        `http://localhost:3001/users/token`,
+        {
+          username: localStorage.getItem('username'),
+        },
+        {
+          headers: { 'x-auth-token': localStorage.getItem('accessToken') },
+        },
+      );
+      if (newAccessToken.errors) {
+        alert('로그인이 끊겼습니다. 재 로그인 부탁드립니다.');
+        navigate('/login');
+        return;
+      }
+      console.log('token is refreshed');
+      localStorage.setItem('accessToken', newAccessToken.data.accessToken);
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      const isDeleted = await axios.delete(`http://localhost:3001/users/mypage-trip-history/${username}/${id}`, {
+        headers: { 'x-auth-token': localStorage.getItem('accessToken') },
+      });
+      alert('삭제 되었습니다.');
+      console.log(isDeleted);
+      setIsConfirmScheduleOpen(false);
+      // 에러 없을 시
+      // alert('삭제 되었습니다.)
+      // isConfirm false;
+      // mypage로 이동
+      // 에러 있을 시
+      // isConfirm false;
+      // 에러 메세지 띄우고 mypage로 이동
+    } catch (e) {}
+
     // pageId로 스케쥴 삭제
   };
   useEffect(() => {
+    if(!scheduleInfo.area){
+      setIsConfirmScheduleOpen(false);
+      navigate(`/myPage/${authState.username}`);
+    };
     const tempPlaces = placesConvertor(scheduleInfo.places);
     setFormedPlaces(tempPlaces);
   }, []);

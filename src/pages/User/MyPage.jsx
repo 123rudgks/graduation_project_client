@@ -99,17 +99,57 @@ function MyPage() {
     setAuthState({ username: '', email: '', status: false });
     navigate('/');
   };
-  const onDetail = (historyId) => {
-    navigate(`./${historyId}`);
+  const onUpdateUser = () => {
+    navigate('/updateUser');
+  }
+  const onDetail =async (historyId) => {
+    if (historyId) {
+      try {
+        const historyDetail = await axios.get(
+          `http://localhost:3001/users/trip-schedule/${authState.username}/${historyId}`,
+          { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
+        );
+        myPageHistory.map((history) => {
+          if (history.id.toString() === historyId) {
+            const tempDetail = {
+              area: history.area,
+              title: history.tripTitle,
+              description: history.description,
+              startDay: history.startDay,
+              endDay: history.endDay,
+              places: historyDetail.data,
+              page_id: history.id,
+            };
+            setHistoryDetailInfo(tempDetail);
+            return;
+          }else{
+          }
+        });
+        setIsConfirmScheduleOpen(true);
+        // console.log(historyDetail.data);
+      } catch (e) {
+        setIsConfirmScheduleOpen(false);
+        console.log(e);
+      }
+    }
+     navigate(`./${historyId}`);
   };
-  //  마이페이지 정보 받아오기
-  useEffect(async () => {
+
+  // login 유지되었는지 체크
+  useEffect(()=>{
     if (!localStorage.getItem('username')) {
       navigate('/login');
     }
     if (!localStorage.getItem('accessToken')) {
       navigate('/login');
     }
+    if(id && !isConfirmScheduleOpen){
+      navigate(`/myPage/${localStorage.getItem('username')}`);
+    }
+  },[isConfirmScheduleOpen])
+  //  마이페이지 정보 받아오기
+  useEffect(async () => {
+    
     // user 정보 갱신 by accessToken
     let basicInfo;
     const username = localStorage.getItem('username');
@@ -117,7 +157,6 @@ function MyPage() {
       basicInfo = await axios.get(
         `http://localhost:3001/users/basicInfo/${username}`,
       );
-      console.log(basicInfo);
       setAuthState({
         username: basicInfo.data.username,
         email: basicInfo.data.email,
@@ -156,45 +195,46 @@ function MyPage() {
     } catch (e) {
       console.log('Error', e);
     }
-  }, []);
-  // detail 정보 표기
-  useEffect(async () => {
-    if (id) {
-      try {
-        const historyDetail = await axios.get(
-          `http://localhost:3001/users/trip-schedule/${authState.username}/${id}`,
-          { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
-        );
-        myPageHistory.map((history) => {
-          if (history.id.toString() === id) {
-            const tempDetail = {
-              area: history.area,
-              title: history.tripTitle,
-              description: history.description,
-              startDay: history.startDay,
-              endDay: history.endDay,
-              places: historyDetail.data,
-              page_id: history.id,
-            };
-            setHistoryDetailInfo(tempDetail);
-            return;
-          }
-        });
-        setIsConfirmScheduleOpen(true);
-        // console.log(historyDetail.data);
-      } catch (e) {
-        setIsConfirmScheduleOpen(true);
-        console.log(e);
-      }
-    }
-  }, [id]);
+  }, [isConfirmScheduleOpen]);
+ // detail 정보 표기
+  // useEffect(async () => {
+  //   console.log(id);
+  //   if (id) {
+  //     try {
+  //       const historyDetail = await axios.get(
+  //         `http://localhost:3001/users/trip-schedule/${authState.username}/${id}`,
+  //         { headers: { 'x-auth-token': localStorage.getItem('accessToken') } },
+  //       );
+  //       myPageHistory.map((history) => {
+  //         if (history.id.toString() === id) {
+  //           const tempDetail = {
+  //             area: history.area,
+  //             title: history.tripTitle,
+  //             description: history.description,
+  //             startDay: history.startDay,
+  //             endDay: history.endDay,
+  //             places: historyDetail.data,
+  //             page_id: history.id,
+  //           };
+  //           setHistoryDetailInfo(tempDetail);
+  //           return;
+  //         }
+  //       });
+  //       setIsConfirmScheduleOpen(true);
+  //       // console.log(historyDetail.data);
+  //     } catch (e) {
+  //       setIsConfirmScheduleOpen(true);
+  //       console.log(e);
+  //     }
+  //   }
+  // }, [id]);
   return (
     <MyPageContainer>
       <Navbar menus={['일정생성', '마이페이지']} />
       <MyPageContent>
         <MyPageHeader>
           <h1>{`${authState.username}의 여행기록`}</h1>
-          <MapHomeRightTopBtn clicked={true}>회원정보수정</MapHomeRightTopBtn>
+          <MapHomeRightTopBtn clicked={true} onClick={onUpdateUser}>회원정보수정</MapHomeRightTopBtn>
           <MapHomeRightTopBtn clicked={true} onClick={onLogout}>
             로그아웃
           </MapHomeRightTopBtn>

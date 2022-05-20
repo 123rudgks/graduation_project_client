@@ -119,6 +119,8 @@ function MapHomeRight() {
 
   const sendKeyword = async (keyword) => {
     const area = localStorage.getItem('area');
+    let recPlace = [];
+    let recSport = [];
     try {
       const res = await axios.post(
         `http://localhost:3001/recommend-${keyword}/search-keyword`,
@@ -137,8 +139,37 @@ function MapHomeRight() {
         onMap: false,
       }));
       // setModalPlaces(res.data.response.body.items.item);
-      setCurrentContents(newCurrentContents);
+      recPlace = newCurrentContents;
+      // setCurrentContents(newCurrentContents);
     } catch {}
+
+    if (keyword === 'place') {
+      try {
+        const res = await axios.post(
+          `http://localhost:3001/recommend-sport/search-keyword`,
+          { keyword: area },
+        );
+        console.log(res);
+        const dataArr = res.data;
+        const newCurrentContents = dataArr.map((place) => ({
+          tag: keyword,
+          contentId: place.contentid,
+          name: place.title,
+          address: place.addr1,
+          img: place.firstimage,
+          lng: place.mapx,
+          lat: place.mapy,
+          onMap: false,
+        }));
+        recSport = newCurrentContents;
+      // setCurrentContents(newCurrentContents);
+
+      } catch (e) {
+        console.log(e);
+      }
+    }
+      setCurrentContents(recPlace.concat(recSport));
+
   };
 
   const showInfo = async (item) => {
@@ -164,7 +195,6 @@ function MapHomeRight() {
         foodplace: res.data.foodplace,
         subfacility: res.data.subfacility,
       };
-      console.log('res', res.data);
       setRecommendInfo(information);
     } catch (e) {
       console.log(e);
