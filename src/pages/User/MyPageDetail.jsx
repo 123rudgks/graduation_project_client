@@ -26,6 +26,25 @@ import {
   ArrowCard,
 } from '../MapHome/ConfirmSchedule';
 
+const DeleteSchedule = styled.input`
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 80px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: #fff7cd;
+  box-shadow: 0px 0px 5px 2px #ebebeb;
+  &:hover {
+    box-shadow: 0px 0px 3px 1.5px #f0f0f0;
+    font-size: 0.8rem;
+  }
+  &:active {
+    box-shadow: none;
+  }
+`;
+
 const placesConvertor = (places) => {
   let days = [];
   let transforedPlaces = [];
@@ -46,6 +65,10 @@ function MyPageDetail({ setIsConfirmScheduleOpen, scheduleInfo }) {
   const [formedPlaces, setFormedPlaces] = useState([]);
   const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
+  const onDeleteSchedule = () => {
+    console.log(scheduleInfo.page_id);
+    // pageId로 스케쥴 삭제
+  };
   useEffect(() => {
     const tempPlaces = placesConvertor(scheduleInfo.places);
     setFormedPlaces(tempPlaces);
@@ -75,7 +98,11 @@ function MyPageDetail({ setIsConfirmScheduleOpen, scheduleInfo }) {
           <DescriptionContents>
             <DescriptionInputContainer>
               <DescriptionTitle>Description</DescriptionTitle>
-              <DescriptionInput value={scheduleInfo.description} readOnly />
+              <DescriptionInput
+                className="description"
+                value={scheduleInfo.description}
+                readOnly
+              />
             </DescriptionInputContainer>
           </DescriptionContents>
         </DescriptionContainer>
@@ -105,6 +132,11 @@ function MyPageDetail({ setIsConfirmScheduleOpen, scheduleInfo }) {
             ))}
           </DayContainer>
         </ScheduleContainer>
+        <DeleteSchedule
+          type="button"
+          value="일정 삭제"
+          onClick={onDeleteSchedule}
+        />
       </ConfirmContainer>
     </ConfirmBackground>
   );

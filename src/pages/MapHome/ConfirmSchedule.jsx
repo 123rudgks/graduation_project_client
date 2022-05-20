@@ -30,7 +30,9 @@ const ConfirmContainer = styled.div`
   flex-direction: column;
   width: 80%;
   height: 80vh;
+  padding: 10px;
   background-color: white;
+  border-radius: 4px;
 `;
 const DescriptionContainer = styled.div`
   width: 100%;
@@ -45,24 +47,34 @@ const DescriptionInputContainer = styled.div`
   flex: 1;
   display: flex;
   margin-left: -1px;
-  border: 1px solid black;
+  & .description{
+    text-align: left;
+    padding-left: 10px;
+  }
+  
 `;
 const DescriptionTitle = styled.div`
   flex: auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-right: 1px solid black;
+  border-right: 1px solid ${(props) => props.theme.grayBGColor};
   background-color: ${(props) => props.theme.mainColor};
+  font-weight: bold;
 `;
 const DescriptionInput = styled.input`
+font-family: ${(props=>props.theme.defaultFont)};
   box-sizing: border-box;
-  border: none;
+  border: 1px solid #cccccc;
+  border-left: none;
+  border-radius: 3px;
   &:focus {
     outline: none;
   }
   width: 80%;
   height: 40px;
+  font-size: 1rem;
+  text-align: center;
 `;
 const ScheduleContainer = styled.div`
   flex: auto;
@@ -81,6 +93,10 @@ const DayCard = styled.div`
   width: 80px;
   height: 40px;
   background-color: ${(props) => props.theme.mainColor};
+  border-radius: 5px;
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 15px;
 `;
 const Places = styled.div`
   display: flex;
@@ -92,17 +108,22 @@ const CardContainer = styled.div`
 const PlacesCard = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
   margin-bottom: 10px;
   width: 100px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   & img {
     width: 100%;
-    height: 100px;
+    height: 95px;
   }
   & div {
     flex: 1;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
     margin: 0%;
-    padding: 0;
+    padding: 0.5px;
   }
 `;
 const ArrowCard = styled.div`
@@ -126,6 +147,17 @@ const ButtonContainer = styled.div`
   & input {
     width: 80px;
     height: 40px;
+    border: none;
+    border-radius: 10px;
+    background-color: #fff7cd;
+    box-shadow: 0px 0px 5px 2px #ebebeb;
+    &:hover{
+      box-shadow: 0px 0px 3px 1.5px #f0f0f0 ;
+      font-size: 0.8rem;
+    }
+    &:active {
+      box-shadow: none;
+    }
   }
 `;
 
@@ -135,7 +167,7 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
   // * : hooks
-  const { authState } = useContext(AuthContext);
+  const { authState, setAuthState } = useContext(AuthContext);
   const navigate = useNavigate();
   // * : functions
   const onSubmit = async () => {
@@ -143,16 +175,37 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
       alert('일지 제목을 작성해주세요');
       return;
     }
-    console.log({
-      username: authState.username,
-      area: scheduleInfo.area,
-      startDate: scheduleInfo.startDateStr,
-      thumbnail: scheduleInfo.days[0].places[0].img,
-      endDate: scheduleInfo.endDateStr,
-      tripTitle: title,
-      description,
-      days: scheduleInfo.days,
-    });
+    // submit하기 전에 token 갱신
+    try{
+      const newAccessToken = await axios.post(
+        `http://localhost:3001/users/token`,
+        {
+          username: localStorage.getItem('username'),
+        },
+        {
+          headers: { 'x-auth-token': localStorage.getItem('accessToken') },
+        },
+      );
+      if(newAccessToken.errors){
+        alert('로그인이 끊겼습니다. 재 로그인 부탁드립니다.');
+        navigate('/login');
+        return;
+      }
+      console.log('token is refreshed');
+      localStorage.setItem('accessToken',newAccessToken.data.accessToken);
+    }catch(e){
+      console.log(e);
+    }
+    // console.log({
+    //   username: authState.username,
+    //   area: scheduleInfo.area,
+    //   startDate: scheduleInfo.startDateStr,
+    //   thumbnail: scheduleInfo.days[0].places[0].img,
+    //   endDate: scheduleInfo.endDateStr,
+    //   tripTitle: title,
+    //   description,
+    //   days: scheduleInfo.days,
+    // });
     await axios
       .post(
         'http://localhost:3001/users/trip-schedule',
@@ -173,6 +226,8 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
         localStorage.removeItem('area');
         localStorage.removeItem('startDate');
         localStorage.removeItem('endDate');
+        localStorage.removeItem('area_lat');
+        localStorage.removeItem('area_lng');
         navigate(`/myPage/${authState.username}`);
       })
       .catch((e) => {
@@ -180,24 +235,9 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
         console.log(e);
       });
   };
-
- 
-
-  // {
-  //   "day" : 1,
-  //   "places": [
-  //      {
-  //                "name" : "헬스장1",
-  //                "img" : "http://tong.visitkorea.or.kr/cms/resource/08/2650208_image2_1.jpg"
-  //            },
-
-  // {
-  //   "day" : 1,
-  //       "order": 1,
-  //       "name" : "헬스장1",
-  //       "img" : "http://tong.visitkorea.or.kr/cms/resource/08/2650208_image2_1.jpg"
-  //    },
-
+  useEffect(()=>{
+    setAuthState({...authState, username: localStorage.getItem('username')});
+  },[])
   return (
     <ConfirmBackground onClick={() => setIsConfirmScheduleOpen(false)}>
       <ConfirmContainer onClick={(e) => e.stopPropagation()}>
@@ -222,6 +262,7 @@ function ConfirmSchedule({ setIsConfirmScheduleOpen, scheduleInfo }) {
             <DescriptionInputContainer>
               <DescriptionTitle>Description</DescriptionTitle>
               <DescriptionInput
+              className='description'
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />

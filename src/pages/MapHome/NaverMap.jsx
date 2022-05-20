@@ -9,12 +9,11 @@ import styled from 'styled-components';
 import axios from 'axios';
 // * : helpers
 import { contexts } from '../../helpers/contexts';
+import hotelIcon from '../../img/lodging.png';
+import eventIcon from '../../img/event.png';
+import normalIcon from '../../img/normal.png';
+import airportIcon from '../../img/airport.png';
 
-/**
- * 1. useState 대신 useRef Tms dlfb?
- * 2. 한 useEffect 에 라인 관련, 마커 관련 섞여있는 이유?
- * 3. path 에 큐 도입 하져
- */
 
 const MileStone = (distance, time) => `
 <div style=
@@ -26,7 +25,6 @@ border:none;">
 <div>${distance || '? '}km</div>
 <div>${time || '? '}</div>
 </div>`;
-
 
 function NaverMap() {
   // * : 변수들
@@ -71,17 +69,6 @@ function NaverMap() {
     },
     [clickedDay],
   );
-
-  // const createPolyline = () => {
-  //   const polyline = new window.naver.maps.Polyline({
-  //     map,
-  //     path: [],
-  //     strokeColor: 'red',
-  //     strokeWeight: 2,
-  //   });
-  //   return polyline;
-  // };
-
   const getInfoFromCenterPoint = (point) => {
     return axios.post('http://localhost:3001/compare-distance', {
       start: [
@@ -104,12 +91,12 @@ function NaverMap() {
   };
 
   // 중심 좌표 설정
-  useEffect(()=>{
+  useEffect(() => {
     setCenterLoc([
       localStorage.getItem('area_lat'),
       localStorage.getItem('area_lng'),
-    ])
-  },[])
+    ]);
+  }, []);
   // day 변경되었을 경우 dayPolyline 변경
   useEffect(() => {
     setDayPolyLines({
@@ -130,15 +117,28 @@ function NaverMap() {
   useEffect(() => {
     // 지도 생성
     map = new window.naver.maps.Map('map', mapOptions);
-
     // 마커 + 이벤트 생성기
     for (let i = 0; i < markers.length; i += 1) {
+      let iconSrc = normalIcon;
+      if (markers[i].tag === 'stay') {
+        iconSrc = hotelIcon;
+      } else if (markers[i].tag === 'place') {
+        iconSrc = eventIcon;
+      } else if(markers[i].name.indexOf('공항')>-1){
+        iconSrc = airportIcon;
+      }
       // 지도에 마커 하나 그리기
       const marker = new window.naver.maps.Marker({
         map,
         title: markers[i].name,
         img: markers[i].img,
         position: new window.naver.maps.LatLng(markers[i].lat, markers[i].lng),
+        icon: {
+          content: `<img src=${iconSrc} style="width:40px;"/>`,
+          size: new naver.maps.Size(10, 12),
+          origin: new naver.maps.Point(0, 0),
+          anchor: new naver.maps.Point(20, 37),
+        },
         zIndex: 100,
       });
       // 마커에 달릴 정보

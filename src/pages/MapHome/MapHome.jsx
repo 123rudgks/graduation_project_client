@@ -72,7 +72,7 @@ function MapHome() {
           setClickedDay,
         }}
       >
-        <Navbar menus={['Menu1', 'Menu2', '마이페이지']} />
+        <Navbar menus={['Home', '마이페이지']} />
         <MapHomeContainer>
           <MapHomeLeftContainer>
             <MapHomeLeft />

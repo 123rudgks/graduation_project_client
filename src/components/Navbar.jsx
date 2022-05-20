@@ -20,6 +20,7 @@ const NavbarContainer = styled.nav`
   height: 70px;
   box-shadow: 0px -3px 3px 0px #f0f0f0 inset;
   font-family: ${(props) => props.theme.defaultFont};
+  font-weight: bold;
 `;
 const NavbarLogo = styled.img`
   width:100px;
@@ -64,6 +65,7 @@ function Navbar({ menus }) {
 
   useEffect(() => {
     setMenuMatching({
+      Home: '../',
       일정생성: `../`,
       마이페이지: `myPage/${authState.username}`,
     });

@@ -6,7 +6,7 @@ export const MapHomeDiv = styled.div`
   font-family: ${(props) => props.theme.defaultFont};
 `;
 export const MapHomeContainer = styled.div`
-  height: calc(100vh - 60px);
+  height: calc(100vh - 70px);
   display: flex;
   flex-direction: row;
 `;

@@ -112,12 +112,12 @@ function MyPage() {
     }
     // user 정보 갱신 by accessToken
     let basicInfo;
+    const username = localStorage.getItem('username');
     try {
       basicInfo = await axios.get(
-        `http://localhost:3001/users/basicInfo/${localStorage.getItem(
-          'username',
-        )}`,
+        `http://localhost:3001/users/basicInfo/${username}`,
       );
+      console.log(basicInfo);
       setAuthState({
         username: basicInfo.data.username,
         email: basicInfo.data.email,
@@ -148,6 +148,7 @@ function MyPage() {
             return;
           }
          localStorage.setItem('accessToken',newAccessToken.data.accessToken);
+         window.location.reload();
         } catch (e) {console.log(e)}
       } else {
         setMyPageHistory(myPageHistory.data);
@@ -173,6 +174,7 @@ function MyPage() {
               startDay: history.startDay,
               endDay: history.endDay,
               places: historyDetail.data,
+              page_id: history.id,
             };
             setHistoryDetailInfo(tempDetail);
             return;

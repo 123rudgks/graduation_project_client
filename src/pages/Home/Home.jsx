@@ -153,7 +153,7 @@ const BtnContainor = styled.div`
   align-items: center;
   & input {
     margin: 40px;
-    width: 80px;
+    width: 90px;
     height: 40px;
     border: none;
     border-radius: 10px;
@@ -264,7 +264,7 @@ function Home() {
 
   return (
     <HomeContainer>
-      <Navbar menus={['Menu1', 'Menu2', '마이페이지']} />
+      <Navbar menus={['마이페이지']} />
       <IntroductionContainor>
         <h1>여행가자</h1>
         <h2>여행 일정 작성 도우미</h2>

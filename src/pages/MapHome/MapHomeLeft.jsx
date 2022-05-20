@@ -23,6 +23,9 @@ import { contexts ,tripInfoContext} from '../../helpers/contexts';
 import {AuthContext} from '../../helpers/AuthContext';
 
 
+const tripInfoDiv = styled.div`
+  font-weight: bold;
+`
 function MapHomeLeft() {
   const {tripInfo, setTripInfo} = useContext(AuthContext);
   // * : 임시로 만든 변수들. 차후 수정 요함
@@ -155,7 +158,7 @@ function MapHomeLeft() {
       <CreateBtn onClick={()=>setIsConfirmScheduleOpen(true)}>일정 생성</CreateBtn>
       {isConfirmScheduleOpen && <ConfirmSchedule setIsConfirmScheduleOpen={setIsConfirmScheduleOpen} scheduleInfo={
         {
-          area:'제주도',
+          area:localStorage.getItem('area'),
           startDateStr,
           endDateStr,
           days
@@ -167,19 +170,23 @@ function MapHomeLeft() {
 
 const CreateBtn = styled.button`
   font-family: ${(props) => props.theme.defaultFont};
+  font-weight: bold;
+  font-size: 1rem;
   border: none;
   display: block;
   height: 50px;
   min-height: 50px;
   background-color: #dcfcfc;
   border-radius: 10px;
-  box-shadow: 0px 0px 5px 2px #f0f0f0;
-  &:hover {
-    font-weight: bold;
-  }
-  &:active {
-    box-shadow: none;
-  }
+  box-shadow: 0px 0px 5px 2px #ebebeb;
+  &:hover{
+      box-shadow: 0px 0px 3px 1.5px #f0f0f0 ;
+  background-color: #dcfcfcd5;
+
+    }
+    &:active {
+      box-shadow: none;
+    }
 `;
 
 export default MapHomeLeft;
