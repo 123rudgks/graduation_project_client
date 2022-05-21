@@ -75,6 +75,7 @@ function App() {
           <GlobalStyles />
           <Routes>
             <Route index element={<Home />} />
+            <Route path="graduation_project_client" element={<Home/>}/>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
             <Route path="mapHome" element={<MapHome />} />
